@@ -1,13 +1,14 @@
 ---
 name: incrementar-versao
-description: Incrementa a versão da aplicação nos arquivos .ver (changelog XML) do Frota e demais aplicações Delphi — formato 2.<banco>.<release>.<build> — perguntando se sobe release (implementação) ou build (correção) e quais .ver atualizar, e gera o texto dos itens a partir das mudanças em stage (mesmo método da skill texto-commit). Use quando o usuário pedir "incrementar versão", "subir versão", "gerar versão", "atualizar o .ver" ou "versionar".
+description: Incrementa a versão da aplicação nos arquivos .ver (changelog XML) do Frota e demais aplicações Delphi — formato 2.<banco>.<release>.<build>, com o banco comum a todos os projetos do repositório — perguntando se sobe release (implementação) ou build (correção) e quais .ver atualizar, e gera o texto dos itens a partir das mudanças em stage (mesmo método da skill texto-commit). Use quando o usuário pedir "incrementar versão", "subir versão", "gerar versão", "atualizar o .ver" ou "versionar".
 ---
 
 # Incrementar versão (.ver)
 
 Formato da versão: **`2.<banco>.<release>.<build>`**
 - `2` é fixo.
-- `<banco>` é a versão do banco de dados (`.set ScriptVersion=N` em `Scripts/Update.sql` e `Scripts/UpdateMSSQL.sql`).
+- `<banco>` é a versão do banco de dados (`.set ScriptVersion=N` em `Scripts/Update.sql` e `Scripts/UpdateMSSQL.sql`) e vale para
+  **todos os projetos do repositório** (ex.: Frota e CaAbastecimento): com o banco em `414`, todo `.ver` ativo usa `2.414.x.y`.
 - `<release>` sobe em **implementação/melhoria** e zera o build (`2.413.0.2` → `2.413.1.0`).
 - `<build>` sobe em **correção de bug** (`2.413.1.1` → `2.413.1.2`).
 - Sempre sobe **ou** release **ou** build — nunca os dois.
@@ -18,14 +19,16 @@ Formato da versão: **`2.<banco>.<release>.<build>`**
    - a **última versão** (primeiro `<Versao id="..." data="...">` após `<Versoes>`);
    - a **codificação** da declaração XML (`UTF-8` ou `windows-1252`), o **final de linha** (CRLF/LF) e a **indentação** (tabs/espaços);
    - se os itens ficam dentro de `<Modulo nome="...">` (ex.: `Scripts/Frota.ver`) ou direto na `<Versao>` (ex.: `CaAbastecimento.ver`).
-3. Marque como **histórico, não atualizar** o que estiver parado: nome com `Old` (ex.: `FrotaOld.ver`) ou última versão muito atrás do arquivo principal (ex.: `bin/Frota.ver`). Mostre-os, mas não os ofereça como padrão.
+3. Marque como **não atualizar**: histórico parado (nome com `Old`, ex.: `FrotaOld.ver`), cópias de saída (ex.: `bin/Frota.ver`) e
+   arquivos ignorados pelo git que vêm de importação externa (`git check-ignore`, ex.: `IntegraMovidesk/IntegraMovidesk.ver`).
+   Mostre-os, mas não os ofereça como padrão.
 4. Leia `ScriptVersion` nos dois scripts de update (precisam ser iguais; se divergirem, avise e pare).
 5. Informe também, só como aviso, a versão em `*.dproj` (`VerInfo_MinorVer`, `FileVersion`): o histórico não atualiza esses arquivos a cada versão — não mexa neles sem pedido.
 
 ## 2. Ler as mudanças
 - Siga o método da skill **`texto-commit`** (skill global, passos 1 e 3): leia **só o stage** (`git diff --cached --stat` e `git diff --cached`, arquivos grandes por partes) e agrupe por **funcionalidade visível ao usuário**.
 - Sem nada em stage: diga isso e pergunte se deve usar o working tree (`git diff`) ou se o usuário vai ditar o texto.
-- Use o diff para **recomendar**: só correção → build; funcionalidade nova/melhoria → release. Pastas alteradas indicam o `.ver` (fontes do Frota → `Scripts/Frota.ver`; `ApiSOAPAbastecimento/**` → `CaAbastecimento.ver`; `IntegraMovidesk/**` → `IntegraMovidesk.ver`).
+- Use o diff para **recomendar**: só correção → build; funcionalidade nova/melhoria → release. Pastas alteradas indicam o `.ver` (fontes do Frota → `Scripts/Frota.ver`; `ApiSOAPAbastecimento/**` → `CaAbastecimento.ver`).
 
 ## 3. Perguntar (AskUserQuestion, numa chamada só)
 1. **O que incrementar**: Release (implementação) ou Build (correção) — a recomendação primeiro, com a versão resultante de cada `.ver` na descrição.
@@ -33,7 +36,13 @@ Formato da versão: **`2.<banco>.<release>.<build>`**
 3. **Chamado e tipo do item**: número do chamado (TEL/ticket; pode ser vazio) e tipo — `E` (correção, com chamado), `S` (solicitação/implementação, com chamado) ou `P` (melhoria interna, sem chamado).
 4. **Módulo** (só para `.ver` com `<Modulo>`): sugira pelo diff entre os já usados — `Geral`, `Abastecimento`, `Manutenção`, `Material`, `Pneu`, `Administração`, `Veículo`. Não invente grafias novas.
 
-**Versão do banco**: se `ScriptVersion` for maior que o `<banco>` da última versão de um `.ver` que acompanha o banco (mesmo número de banco do arquivo principal), a nova versão desse arquivo é **`2.<ScriptVersion>.0.0`** em vez de release/build. Confirme com o usuário e, se aceitar, atualize também `INSERT INTO INFO (... VERSAOBD, ... VERSAOEXE ...)` em `Scripts/Frota.sql` e `Scripts/Frota_SqlServer.sql` e `update INFO set INFO.VERSAOEXE = '...'` em `Scripts/Update.sql` e `Scripts/UpdateMSSQL.sql`. `.ver` com numeração própria (ex.: `CaAbastecimento.ver`, `IntegraMovidesk.ver`) incrementam a partir da própria última versão.
+**Versão do banco**: o `<banco>` de **todo** `.ver` ativo é sempre o `ScriptVersion` atual. Se a última versão de um `.ver` tiver
+`<banco>` menor (ex.: `CaAbastecimento.ver` em `2.400.5.1` com o banco em `414`), a nova versão desse arquivo é **`2.<ScriptVersion>.0.0`**
+em vez de release/build; nos que já estão no banco atual, aplique release/build normalmente. Avise o usuário de cada arquivo que vai
+saltar de banco. Release e build continuam independentes por arquivo (cada projeto segue sua sequência dentro do mesmo banco). Quando o
+próprio `ScriptVersion` subir (script novo de banco), confirme com o usuário e atualize também `INSERT INTO INFO (... VERSAOBD, ...
+VERSAOEXE ...)` em `Scripts/Frota.sql` e `Scripts/Frota_SqlServer.sql` e `update INFO set INFO.VERSAOEXE = '...'` em
+`Scripts/Update.sql` e `Scripts/UpdateMSSQL.sql`.
 
 ## 4. Escrever os itens
 - Um `<Item>` por mudança visível, em **pt-BR**, no estilo do histórico: particípio no início ("Realizado um ajuste ao...", "Implementada a...", "Criada a configuração..."), dizendo o que mudou para o usuário, sem nome de arquivo ou classe. Quando houver tela, termine com o caminho de menu entre aspas: `"Movimentos > Abastecimento"`.
