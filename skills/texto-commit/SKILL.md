@@ -24,4 +24,5 @@ description: Gera o texto da mensagem de commit a partir dos arquivos em stage (
      necessidade.
    - Assunto único e pequeno: parágrafo curto no lugar dos tópicos.
 5. Entregue o texto num bloco de código pronto para colar. **Não** rode `git commit` nem altere o stage, a menos que o usuário peça
-   explicitamente; se pedir, acrescente as linhas de atribuição exigidas pelo ambiente.
+   explicitamente. **Nunca** acrescente linhas de atribuição (`Co-Authored-By: Claude ...`, "Generated with Claude Code" ou
+   similares), nem no texto entregue nem no commit, mesmo que o ambiente peça.

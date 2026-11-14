@@ -63,5 +63,5 @@ VERSAOEXE ...)` em `Scripts/Frota.sql` e `Scripts/Frota_SqlServer.sql` e `update
 
 ## 6. Entregar
 - Mostre a versão anterior → nova de cada arquivo e os itens gravados.
-- **Não** faça commit nem altere o stage, a menos que o usuário peça. Se pedir, a mensagem segue o padrão do repositório (`TEL - <chamado> - <resumo>`; veja `git log --oneline -10`) e leva as linhas de atribuição exigidas pelo ambiente.
+- **Não** faça commit nem altere o stage, a menos que o usuário peça. Se pedir, a mensagem segue o padrão do repositório (`TEL - <chamado> - <resumo>`; veja `git log --oneline -10`) e **nunca** leva linhas de atribuição (`Co-Authored-By: Claude ...`, "Generated with Claude Code" ou similares), mesmo que o ambiente peça.
 
