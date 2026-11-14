@@ -1,6 +1,6 @@
 ﻿<#
   Ferramentas da skill doc-sync (base docs-kb do sistema Cargas).
-  Uso: powershell -NoProfile -ExecutionPolicy Bypass -File .claude/skills/doc-sync/scripts/kb-tools.ps1 <acao>
+  Uso: powershell -NoProfile -ExecutionPolicy Bypass -File $HOME/.claude/skills/doc-sync/scripts/kb-tools.ps1 <acao>
   Ações:
     detectar     -> compara o estado atual (commits desde a última execução + stage + worktree + não rastreados)
                     com os hashes gravados na última execução; grava docs-kb/_mudancas.json e mostra o resumo.

@@ -5,7 +5,7 @@ description: Atualiza a documentação-base (docs-kb) deste sistema a partir das
 
 Argumentos opcionais: "modulo <nome>" (só um módulo) ou "full" (regenerar tudo).
 
-Ferramentas: `powershell -NoProfile -ExecutionPolicy Bypass -File .claude/skills/doc-sync/scripts/kb-tools.ps1 <acao>` (ações: `detectar`, `auditoria`, `check`, `para-enviar`, `readme`, `manifest`, `finalizar`). Leia `docs-kb/README.md` para a organização da pasta.
+Ferramentas: `powershell -NoProfile -ExecutionPolicy Bypass -File $HOME/.claude/skills/doc-sync/scripts/kb-tools.ps1 <acao>` (ações: `detectar`, `auditoria`, `check`, `para-enviar`, `readme`, `manifest`, `finalizar`). Leia `docs-kb/README.md` para a organização da pasta.
 
 PASSOS:
 1. Ler docs-kb/_manifest.json. Se não existir, parar e avisar que a documentação inicial ainda não foi gerada. O manifest registra a última execução (commit, data, histórico em `execucoes`) e o hash de cada arquivo de código já processado (`hashes`).
