@@ -28,4 +28,7 @@ alterado e o que não se aplicava.
    alterados (`git diff --name-only HEAD`) e corrigir os divergentes.
 7. **Builds**: `cd argos-back && dotnet build Argos.slnx` (0 warnings; `MSB3026/7` = API rodando, reinicie) e
    `cd argos-front && npm run build` limpo. Falhou → corrigir e repetir; reportar a saída se não der.
-8. Não commitar; sugerir a skill `texto-commit` para a mensagem.
+8. **Arquivos de progresso** (`.claude/progress-*.md`): conferir no código cada item marcado como concluído e remover do arquivo os
+   concluídos (frentes, decisões e fases já entregues), deixando só as pendências reais com o mínimo para retomar; sem pendência, apagar o
+   arquivo (`git rm`). Item que o código não confirma continua no arquivo.
+9. Não commitar; sugerir a skill `texto-commit` para a mensagem.
