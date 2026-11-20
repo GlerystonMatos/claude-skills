@@ -21,5 +21,21 @@ Regras: **nunca** usar `dados/` original nem o Firestore de produção.
    `GET http://localhost:5190/health` e a linha "Armazenamento de dados: arquivos JSON em …scratchpad…" no log.
 5. **Front**: `cd argos-front && VITE_API_URL=http://localhost:5190 npx vite --port 5191` em segundo plano.
 6. **curl** com acento no Git Bash: JSON com `\uXXXX`. Login: `POST /api/auth/login` com `{ login, senha }` → `Authorization: Bearer <token>`.
-7. **Navegador** (claude-in-chrome): com a aba oculta, validar pelo DOM (`javascript_tool`), uma ação por chamada.
-8. Ao terminar: encerre os dois processos de teste.
+7. **Navegador** (claude-in-chrome): com a aba oculta, validar pelo DOM (`javascript_tool`), uma ação por chamada. A captura de tela
+   às vezes trava ("renderer may be frozen"): meça pelo DOM e tente a captura de novo depois; não conclua nada sem medida.
+8. **Login no navegador (acesso inicial)** — sem digitar senha em campo nenhum e sem exibir credenciais:
+   1. Antes de subir a API, tire `AppUsuarios.json` da cópia (`mv <scratchpad>/api/dados/AppUsuarios.json <scratchpad>/AppUsuarios.json.bak`).
+   2. Suba a API (passos 2–4) e faça o login por curl, lendo `AUTH__USUARIO`/`AUTH__SENHA` do `.env` num arquivo temporário do
+      scratchpad que é apagado logo depois; a resposta vai para `<scratchpad>/sessao.json` (nunca imprima o token).
+   3. Monte a sessão do front (`{ tokenAcesso, tokenRenovacao, lembrar: false, usuario }`) com `node` e grave
+      `JSON.stringify(JSON.stringify(sessao))` em `argos-front/public/sessao-teste.txt`.
+   4. No navegador, em `http://localhost:5191/`: `sessionStorage.setItem('argos:sessao', JSON.parse(await (await fetch('/sessao-teste.txt')).text()))`
+      e `location.reload()` (chave `argos:sessao`, de `api/sessao.ts`).
+   5. **Apague `argos-front/public/sessao-teste.txt` na mesma hora** (nunca pode ir para o git).
+   6. Devolva `AppUsuarios.json` à cópia. O token continua valendo até a API reiniciar; a API carrega os usuários na subida, então as
+      listas de pessoas ficam vazias e os nomes aparecem como login até reiniciar — e, reiniciada com usuários, o token do acesso inicial
+      deixa de valer (repita do passo 1).
+   7. No acesso inicial, Cronômetro, Usuários e parte das Configurações não carregam dados, e salvar algo com campo de pessoa pode
+      falhar por "registro que não existe mais": para testar gravação pela API, prefira um teste automatizado no back.
+9. Ao terminar: encerre os dois processos de teste (`netstat -ano | grep -E ":(5190|5191) "` → `taskkill //F //PID`), feche a aba e
+   confirme que `argos-front/public/sessao-teste.txt` não existe e que `AppUsuarios.json` voltou para a cópia.
