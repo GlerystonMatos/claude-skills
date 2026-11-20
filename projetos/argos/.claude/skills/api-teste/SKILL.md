@@ -8,12 +8,15 @@ description: Sobe a API do Argos em modo de teste isolado (publish no scratchpad
 Regras: **nunca** usar `dados/` original nem o Firestore de produção.
 
 1. **Dados**: copie `dados/` da raiz do repositório (ou a pasta informada pelo usuário) para `<scratchpad>/api/dados/` só se ainda
-   não existir — a cópia é reaproveitada entre testes. Para entrar pelo bootstrap, rode sem `AppUsuarios.json` na cópia (nesse modo a tela Usuários não lista ninguém).
+   não existir — a cópia é reaproveitada entre testes. Em seguida rode `python .claude/skills/api-teste/scripts/usuario_teste.py preparar <scratchpad>`:
+   cria na **cópia** o usuário fixo `teste-validacao` (perfil Administrador, colaborador TST) com senha aleatória guardada em
+   `<scratchpad>/usuario-teste.json` (nunca exibir). Assim todas as telas carregam com os dados reais da cópia (o bootstrap, sem
+   `AppUsuarios.json`, não lista usuários nem carrega Cronômetro e parte das Configurações — use só se o usuário pedir).
 2. **Publicar**: `taskkill //F //IM Argos.Api.exe` (só a de teste; a do usuário usa 5180/5003 — confirme pela porta antes) e
    `cd argos-back && dotnet publish Argos.Api -c Release -o <scratchpad>/api`.
 3. **Variáveis** (a API não lê o `.env`; passe no ambiente do processo, sem exibir valores):
    - `CHAVE_CRIPTOGRAFIA` = a do `.env` da raiz (**obrigatório** o valor certo: sem ela os tokens viram vazios e salvar grava vazio);
-   - `AUTH__JWT_CHAVE` qualquer (≥ 32 bytes), `AUTH__USUARIO`/`AUTH__SENHA` do `.env` (bootstrap);
+   - `AUTH__JWT_CHAVE` qualquer (≥ 32 bytes); `AUTH__USUARIO`/`AUTH__SENHA` do `.env` só no modo bootstrap;
    - `ARMAZENAMENTO__PROJETO_FIRESTORE` **vazia** (arquivos JSON) — ou `FIRESTORE_EMULATOR_HOST` para o emulador;
    - `ASPNETCORE_URLS=http://localhost:5190`;
    - `HTTPS_PROXY`/`HTTP_PROXY=http://127.0.0.1:9` (Google/Gemini falham rápido) e `NO_PROXY=.atlassian.net` se o Jira real for necessário.
@@ -23,19 +26,12 @@ Regras: **nunca** usar `dados/` original nem o Firestore de produção.
 6. **curl** com acento no Git Bash: JSON com `\uXXXX`. Login: `POST /api/auth/login` com `{ login, senha }` → `Authorization: Bearer <token>`.
 7. **Navegador** (claude-in-chrome): com a aba oculta, validar pelo DOM (`javascript_tool`), uma ação por chamada. A captura de tela
    às vezes trava ("renderer may be frozen"): meça pelo DOM e tente a captura de novo depois; não conclua nada sem medida.
-8. **Login no navegador (acesso inicial)** — sem digitar senha em campo nenhum e sem exibir credenciais:
-   1. Antes de subir a API, tire `AppUsuarios.json` da cópia (`mv <scratchpad>/api/dados/AppUsuarios.json <scratchpad>/AppUsuarios.json.bak`).
-   2. Suba a API (passos 2–4) e faça o login por curl, lendo `AUTH__USUARIO`/`AUTH__SENHA` do `.env` num arquivo temporário do
-      scratchpad que é apagado logo depois; a resposta vai para `<scratchpad>/sessao.json` (nunca imprima o token).
-   3. Monte a sessão do front (`{ tokenAcesso, tokenRenovacao, lembrar: false, usuario }`) com `node` e grave
-      `JSON.stringify(JSON.stringify(sessao))` em `argos-front/public/sessao-teste.txt`.
-   4. No navegador, em `http://localhost:5191/`: `sessionStorage.setItem('argos:sessao', JSON.parse(await (await fetch('/sessao-teste.txt')).text()))`
+8. **Login no navegador** — sem digitar senha em campo nenhum e sem exibir credenciais:
+   1. Com a API no ar, rode `python .claude/skills/api-teste/scripts/usuario_teste.py sessao <scratchpad> argos-front/public/sessao-teste.txt`
+      (faz o login do `teste-validacao` e grava a sessão já no formato do `sessionStorage`; nunca imprime o token).
+   2. No navegador, em `http://localhost:5191/`: `sessionStorage.setItem('argos:sessao', JSON.parse(await (await fetch('/sessao-teste.txt')).text()))`
       e `location.reload()` (chave `argos:sessao`, de `api/sessao.ts`).
-   5. **Apague `argos-front/public/sessao-teste.txt` na mesma hora** (nunca pode ir para o git).
-   6. Devolva `AppUsuarios.json` à cópia. O token continua valendo até a API reiniciar; a API carrega os usuários na subida, então as
-      listas de pessoas ficam vazias e os nomes aparecem como login até reiniciar — e, reiniciada com usuários, o token do acesso inicial
-      deixa de valer (repita do passo 1).
-   7. No acesso inicial, Cronômetro, Usuários e parte das Configurações não carregam dados, e salvar algo com campo de pessoa pode
-      falhar por "registro que não existe mais": para testar gravação pela API, prefira um teste automatizado no back.
+   3. **Apague `argos-front/public/sessao-teste.txt` na mesma hora** (nunca pode ir para o git).
+   4. O token vale até a API reiniciar; depois de reiniciar, gere a sessão de novo (passo 1).
 9. Ao terminar: encerre os dois processos de teste (`netstat -ano | grep -E ":(5190|5191) "` → `taskkill //F //PID`), feche a aba e
-   confirme que `argos-front/public/sessao-teste.txt` não existe e que `AppUsuarios.json` voltou para a cópia.
+   confirme que `argos-front/public/sessao-teste.txt` não existe.

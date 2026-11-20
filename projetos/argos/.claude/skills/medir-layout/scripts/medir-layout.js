@@ -63,7 +63,8 @@ window.argosLayout = (() => {
             const entrada = campo.querySelector('input:not([type=hidden]):not([aria-hidden=true]), .MuiPickersSectionList-root');
             if (entrada && !multilinha) {
                 const { acima, abaixo } = tintaDoTexto(entrada);
-                if (Math.abs(acima - abaixo) > 1.5) problemas.push(`${rotulo}: texto fora do meio (maiúscula ${acima.toFixed(1)} / base ${abaixo.toFixed(1)})`);
+                const rotuloNaBorda = campo.parentElement.querySelector('label')?.dataset.shrink === 'true';
+                if (Math.abs(acima - abaixo - (rotuloNaBorda ? 2 : 0)) > 1.5) problemas.push(`${rotulo}: texto fora do meio (maiúscula ${acima.toFixed(1)} / base ${abaixo.toFixed(1)})`);
             }
             const ajuda = campo.parentElement.querySelector('.MuiFormHelperText-root');
             if (ajuda && ajuda.textContent.trim() !== '') {
@@ -80,8 +81,13 @@ window.argosLayout = (() => {
         raiz.querySelectorAll('button.MuiButton-root, .MuiToggleButton-root').forEach((botao) => {
             const caixa = botao.getBoundingClientRect();
             if (caixa.height === 0 || botao.closest('.MuiAlert-action, .MuiPickersLayout-root')) return;
-            const naLinhaDeCampo = [...(botao.parentElement?.parentElement?.children ?? []), ...(botao.parentElement?.children ?? [])]
-                .some((irmao) => irmao !== botao && irmao.matches?.('.MuiFormControl-root, .MuiAutocomplete-root, .MuiPickersTextField-root'));
+            const meio = caixa.top + caixa.height / 2;
+            const naLinhaDeCampo = !!botao.closest('.linha-controles') || [...(botao.parentElement?.parentElement?.children ?? []), ...(botao.parentElement?.children ?? [])]
+                .some((irmao) => {
+                    if (irmao === botao || !irmao.matches?.('.MuiFormControl-root, .MuiAutocomplete-root, .MuiPickersTextField-root')) return false;
+                    const outra = irmao.querySelector('.MuiInputBase-root, .MuiPickersInputBase-root')?.getBoundingClientRect();
+                    return !!outra && Math.abs(outra.top + outra.height / 2 - meio) < 4;
+                });
             const esperado = naLinhaDeCampo ? ALTURA_CAMPO : ALTURA_BOTAO;
             if (Math.round(caixa.height) !== esperado) problemas.push(`botão "${botao.textContent.trim().slice(0, 20)}": ${Math.round(caixa.height)} (esperado ${esperado})`);
             if (!botao.querySelector('.MuiButton-startIcon, .MuiButton-endIcon, svg') && botao.classList.contains('MuiButton-root')) problemas.push(`botão "${botao.textContent.trim().slice(0, 20)}" sem ícone`);
@@ -100,6 +106,46 @@ window.argosLayout = (() => {
         return { titulo, campos, problemas };
     }
 
+    async function abas(dialogo = document.querySelector('.MuiDialog-paper:last-of-type')) {
+        const resultado = [];
+        const botoes = [...dialogo.querySelectorAll('.MuiTabs-root [role=tab]')];
+        for (const aba of botoes) {
+            aba.click();
+            await espera(500);
+            const conteudo = dialogo.querySelector('.MuiDialogContent-root');
+            const acoes = dialogo.querySelector('.MuiDialogActions-root');
+            const rolaveis = [...dialogo.querySelectorAll('*')].filter((el) => el.scrollHeight > el.clientHeight + 1 && ['auto', 'scroll'].includes(getComputedStyle(el).overflowY));
+            const filhos = [...(conteudo?.querySelectorAll('*') ?? [])].filter((el) => el.getBoundingClientRect().height > 0 && el.children.length === 0);
+            const fimConteudo = Math.max(...filhos.map((el) => el.getBoundingClientRect().bottom));
+            resultado.push({
+                aba: aba.textContent.trim(),
+                alturaModal: Math.round(dialogo.getBoundingClientRect().height),
+                folgaAteRodape: acoes ? Math.round(acoes.getBoundingClientRect().top - fimConteudo) : null,
+                rolaModal: rolaveis.includes(conteudo) || rolaveis.includes(dialogo),
+                rolaPorDentro: rolaveis.filter((el) => el !== conteudo && el !== dialogo).length,
+            });
+        }
+        botoes[0]?.click();
+        return resultado;
+    }
+
+    function transbordo() {
+        const largura = document.documentElement.clientWidth;
+        const pagina = document.documentElement.scrollWidth > largura;
+        const fora = [...document.querySelectorAll('main *, .MuiDialog-paper *')]
+            .filter((el) => {
+                const caixa = el.getBoundingClientRect();
+                if (caixa.width === 0 || caixa.right <= largura + 1) return false;
+                for (let pai = el.parentElement; pai && pai !== document.body; pai = pai.parentElement) {
+                    if (['auto', 'scroll', 'hidden'].includes(getComputedStyle(pai).overflowX)) return false;
+                }
+                return true;
+            })
+            .slice(0, 8)
+            .map((el) => `${el.tagName.toLowerCase()}.${[...el.classList].slice(0, 2).join('.')} (${el.textContent.trim().slice(0, 20)})`);
+        return { largura, paginaRolaNaHorizontal: pagina, fora };
+    }
+
     function menuLateral() {
         return itensMenu().map((item) => `${item.textContent.trim().slice(0, 18)}: ${Math.round(item.getBoundingClientRect().height)}`);
     }
@@ -113,6 +159,6 @@ window.argosLayout = (() => {
         return resultado;
     }
 
-    return { irPara, fecharAvisosIniciais, medir, menuLateral, varrer, espera };
+    return { irPara, fecharAvisosIniciais, medir, abas, transbordo, menuLateral, varrer, espera };
 })();
 'carregado: argosLayout.medir(), argosLayout.varrer([[grupo, item], ...]), argosLayout.menuLateral()';

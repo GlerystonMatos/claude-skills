@@ -12,6 +12,7 @@ Mede com o DOM e as métricas da fonte, sem depender de captura de tela (que às
 2. No navegador (claude-in-chrome), abra uma aba nova em `http://localhost:5191/`.
 
 ## 2. Carregar o medidor
+Para medir no celular sem redimensionar a janela (o Chrome às vezes ignora), crie um `iframe` fixo de 390×844 com `src='/'` na própria aba (a sessão do `sessionStorage` vale nele), carregue o medidor dentro dele (`iframe.contentWindow.eval(...)`) e navegue pelo botão "abrir menu" do cabeçalho.
 Leia `scripts/medir-layout.js` desta skill e execute o conteúdo inteiro com `javascript_tool` (uma vez por carregamento da página; um
 `location.reload()` apaga). Ele cria `window.argosLayout` com:
 
@@ -22,17 +23,19 @@ Leia `scripts/medir-layout.js` desta skill e execute o conteúdo inteiro com `ja
 | `argosLayout.medir()` | Mede o dialog aberto (ou o `main`) e devolve `{ titulo, campos, problemas }` |
 | `await argosLayout.varrer([['Meu trabalho', 'Cronogramas'], ...])` | Navega e mede cada tela |
 | `argosLayout.menuLateral()` | Altura de cada grupo/item do menu |
+| `await argosLayout.abas()` | No dialog aberto, clica em cada aba e mede a altura do modal, a folga até o rodapé e se o modal rola (deve ser `false`; só a área interna rola). A altura deve ser a da maior aba |
+| `argosLayout.transbordo()` | Diz se a página rola na horizontal e lista elementos que passam da largura da janela (fora de tabelas). Use com a janela em 360–400 px |
 
 `problemas` vazio = dentro do padrão. `campos: 0` numa tela que deveria ter campos = a tela não carregou (o acesso inicial não carrega
-Cronômetro, Usuários e parte das Configurações): diga isso ao usuário em vez de concluir que está tudo certo.
+Cronômetro, Usuários e parte das Configurações; use o usuário de teste da `api-teste`): diga isso ao usuário em vez de concluir que está tudo certo.
 
 ## 3. O que cada problema quer dizer
 - **altura N (esperado 36)**: campo fora da altura do tema (`ALTURA_CONTROLE`); procure `size`/`height`/`py` sobrescritos na tela.
 - **badge/chip com folga a/b**: menos de 5 px ou diferença acima de 1,5 px entre cima e embaixo.
 - **texto fora do meio (maiúscula a / base b)**: distância da borda de cima ao topo das maiúsculas e da linha de base à borda de baixo;
-  devem ficar iguais (±1,5 px). O tema compensa a fonte com `AJUSTE_OPTICO_TEXTO`.
+  devem ficar iguais (±1,5 px); com o rótulo na borda o texto fica 2 px mais baixo de propósito (`AJUSTE_ROTULO_NA_BORDA`). O tema compensa a fonte com `AJUSTE_OPTICO_TEXTO`.
 - **texto de ajuda a N px do rótulo de baixo**: menos de 3 px encosta; o padrão é ~5 px.
-- **botão: N (esperado 32/36)**: 36 só quando o botão fica na linha de um campo; se um `<span>` de tooltip separa o botão da linha, o tema
+- **botão: N (esperado 32/36)**: 36 só quando o botão fica na linha de um campo (mesmo centro vertical) ou dentro de `.linha-controles`; no celular, botão que quebrou para a linha de baixo continua com 36 (o tema detecta pelo DOM) — só aponte se destoar; se um `<span>` de tooltip separa o botão da linha, o tema
   não detecta e a tela precisa ajustar.
 - **botão sem ícone**: todo botão tem `startIcon` (padrões).
 - **barra do editor: a em cima / b embaixo**: deve ser simétrica, contando de baixo do rótulo.
