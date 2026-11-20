@@ -58,7 +58,8 @@ window.argosLayout = (() => {
                 if (caixa.height < 8) return;
                 const acima = caixa.top - borda.top;
                 const abaixo = borda.bottom - caixa.bottom;
-                if (Math.min(acima, abaixo) < 5 || Math.abs(acima - abaixo) > 1.5) problemas.push(`${rotulo}: badge/chip com folga ${Math.round(acima)}/${Math.round(abaixo)}`);
+                const desvio = item.classList.contains('MuiChip-root') && campo.parentElement.querySelector('label')?.dataset.shrink === 'true' ? 2 : 0;
+                if (Math.min(acima, abaixo) < 5 || Math.abs(acima - abaixo - desvio) > 1.5) problemas.push(`${rotulo}: badge/chip com folga ${Math.round(acima)}/${Math.round(abaixo)}`);
             });
             const entrada = campo.querySelector('input:not([type=hidden]):not([aria-hidden=true]), .MuiPickersSectionList-root');
             if (entrada && !multilinha) {

@@ -31,7 +31,7 @@ Cronômetro, Usuários e parte das Configurações; use o usuário de teste da `
 
 ## 3. O que cada problema quer dizer
 - **altura N (esperado 36)**: campo fora da altura do tema (`ALTURA_CONTROLE`); procure `size`/`height`/`py` sobrescritos na tela.
-- **badge/chip com folga a/b**: menos de 5 px ou diferença acima de 1,5 px entre cima e embaixo.
+- **badge/chip com folga a/b**: menos de 5 px ou diferença acima de 1,5 px entre cima e embaixo (chips da seleção múltipla com o rótulo na borda ficam 9/7 de propósito; badges de pessoa nos campos têm 20 px, 8/8).
 - **texto fora do meio (maiúscula a / base b)**: distância da borda de cima ao topo das maiúsculas e da linha de base à borda de baixo;
   devem ficar iguais (±1,5 px); com o rótulo na borda o texto fica 2 px mais baixo de propósito (`AJUSTE_ROTULO_NA_BORDA`). O tema compensa a fonte com `AJUSTE_OPTICO_TEXTO`.
 - **texto de ajuda a N px do rótulo de baixo**: menos de 3 px encosta; o padrão é ~5 px.
