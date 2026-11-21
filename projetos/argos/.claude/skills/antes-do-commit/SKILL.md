@@ -17,6 +17,9 @@ alterado e o que não se aplicava.
    nunca pelo nome do perfil.
 3. **Endpoint/DTO** mudou? `src/api/tipos.ts` espelha o record C#; tabela de endpoints no `argos-back/README.md`.
 4. **Regra não óbvia** nova ou revertida? Registrar no doc certo de `argos-doc/` (ver índice no `CLAUDE.md`), sucinto, sem duplicar.
+   **Padrão** novo, alterado ou revertido (camadas, dados, permissões, tema, componente compartilhado, infra, processo, versão de
+   dependência)? Atualizar o pacote `argos-doc/padroes/` conforme "Manutenção" do `00-leia-me.md` (documento da área, `catalogo.json`,
+   checklist `09a`/`09b` e, se obrigatório, `10-agents.md`), sem segredos e com todo caminho citado existindo.
 5. **Padrões** (`argos-doc/padroes.md`): sem comentários; pt-BR; C# com tipo explícito e `using` ordenado; TS sem `any`/`enum`, imports em
    pirâmide (uma linha por comprimento crescente, depois multilinha, `@mui/material` por último), `import type`; nenhum hex fora de
    `theme.ts`. Em dialog **novo**, conferir o **rodapé** (dialogs existentes não são ajustados por conta própria, só quando o usuário pedir): o botão (Fechar/Salvar) fica à mesma distância do conteúdo acima, da
