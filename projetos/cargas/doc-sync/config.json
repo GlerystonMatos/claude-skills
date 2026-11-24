@@ -1,0 +1,26 @@
+{
+    "sistema":  "Cargas",
+    "objetivo":  "A pasta `docs-kb/` guarda a documentação do sistema Cargas (TMS desktop Delphi, `cargas/Fontes`) gerada a partir do código-fonte, para servir de base de conhecimento (RAG) do assistente **Argos**. Cada afirmação vem do código e é marcada como \"Confirmado no código\" ou \"Inferido (verificar)\". O envio ao Google Drive é manual.",
+    "porqueNome":  "\"kb\" é a sigla de *knowledge base* (base de conhecimento): `docs-kb` significa \"documentação da base de conhecimento\". O nome foi definido no pedido original de geração da documentação, por ser o conteúdo que alimenta a base de conhecimento do assistente Argos.",
+    "clientesNoPublico":  "Diageo|Ambev|Socen",
+    "publicoProibido":  {
+                            "arquivo-fonte":  "\\b\\w+\\.(pas|dfm|dpr|dproj|sql|cs|tsx?)\\b",
+                            "classe/unit":  "\\b(T(frm|dm|Kr)[A-Z]\\w+|Kr[A-Z][a-z]\\w+)\\b",
+                            "caminho":  "(cargas/Fontes|cargas\\\\Fontes|update\\.sql|Cargas32\\.(sql|dpr))",
+                            "nome-interno":  "(`FORTES`|usu[aá]rio FORTES|Cortana|CaImpXML|CABAIXAIMG|`AUTOMATICO`|`CARGASSAC`|TOTVS)"
+                        },
+    "urlsPermitidas":  "tempuri\\.org|calculadorafrete\\.antt\\.gov\\.br",
+    "excecoesDePar":  [
+                          "upload/suporte/telas/seguranca-usuarios-configuracao--configuracao-preferencias-parte-2.md",
+                          "upload/desenvolvimento/modulos/edi-integracoes-clientes-parte-3-dev.md",
+                          "upload/desenvolvimento/glossario-parte-2-dev.md"
+                      ],
+    "arquivosDeControle":  {
+                               "_mapa.md":  "Mapa técnico inicial do repositório (stack, módulos, processos). Sigiloso.",
+                               "_mapa-arquivos.csv":  "Cada unit de `cargas/Fontes` → módulo. Usado para localizar o módulo de arquivos novos.",
+                               "_mapa-telas.csv":  "Cada item do menu principal → código de permissão → handler → units."
+                           },
+    "acoesExtras":  {
+                        "auditoria":  "scripts/auditoria.ps1"
+                    }
+}
