@@ -6,8 +6,8 @@ Skills do Claude Code, versionadas num só lugar.
 
 | Pasta | Conteúdo | Instalação |
 |---|---|---|
-| `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao-argos`, `revisar-padroes-argos`, `infra-gcp-padrao-argos`) | Globais: `~/.claude/skills/<skill>` (Claude Code e opencode) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
-| `projetos/<projeto>/` | Cópia versionada das skills específicas de cada projeto (`.claude/skills`, `.claude/commands`, `.agents/skills`) | Continuam no próprio projeto; aqui é só o versionamento |
+| `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao-argos`, `revisar-padroes-argos`, `infra-gcp-padrao-argos`, `antes-do-commit`, `api-teste`, `medir-layout`) | Globais: `~/.claude/skills/<skill>` (Claude Code e opencode) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
+| `projetos/<repo>/` | Configuração de cada projeto para as skills globais: `<skill>.md` (itens, portas, comandos, variáveis) e `<skill>/scripts/` | Só aqui; os projetos não guardam skills. `<repo>` = nome do repositório no `origin` |
 
 ## Instalar ou atualizar as skills globais
 
@@ -21,24 +21,32 @@ Cria uma junção em `~/.claude/skills` e em `~/.codex/skills` para cada pasta d
 
 Como a pasta global aponta para o repositório, editar uma skill aqui já vale no Claude Code; basta commitar.
 
-## Versionar as skills dos projetos
+## Configuração por projeto
+
+Skills como `antes-do-commit`, `api-teste` e `medir-layout` têm uma parte comum (o `SKILL.md` em `skills/`) e uma parte de cada
+projeto, em `projetos/<repo>/<skill>.md` (e scripts em `projetos/<repo>/<skill>/scripts/`). A skill descobre o repositório central por
+`git -C "<pasta da skill>" rev-parse --show-toplevel` (a pasta é uma junção; `..` não serve) e o projeto pelo nome do repositório em
+`git remote get-url origin` (sem remote, o nome da pasta). Sem configuração para o projeto, ela avisa e propõe criar o arquivo na hora.
+
+## Verificar os projetos
 
 ```powershell
-.\coletar-projetos.ps1
+.\verificar-projetos.ps1
 ```
 
 Pede a pasta dos projetos desta máquina (o local muda entre máquinas) e a guarda em `.pasta-projetos`, fora do git, para sugerir na
-próxima vez. Também aceita `-PastaProjetos D:\Projetos`. Procura `.claude/skills`, `.claude/commands` e `.agents/skills` até 3 níveis
-abaixo dela (ex.: `D:\Projetos\narota\atena-api\.claude\skills`) e copia para `projetos/<projeto>/`, sobrescrevendo.
+próxima vez. Também aceita `-PastaProjetos D:\Projetos`. Procura repositórios git até 3 níveis abaixo dela e **não copia nem remove
+nada**; só avisa:
 
-**Nunca remove nada** de `projetos/`: cada máquina pode ter mais ou menos projetos, e os que faltam nesta continuam versionados. O script
-só avisa quando uma skill está no repositório mas não no projeto local (se ela foi mesmo removida, apague-a de `projetos/` à mão) e
-quando um projeto tem cópia de uma skill global, que deve ser removida do projeto.
+- projeto com `.claude/skills`, `.claude/commands` ou `.agents/skills`: a skill local esconde a global de mesmo nome, ou deveria vir
+  para `skills/` (se servir a outros projetos) ou para `projetos/<repo>/`;
+- pasta em `projetos/` sem repositório local nesta máquina (pode ser só outra máquina; se o projeto acabou, apague a pasta).
 
 ## Regras
 
-- Skill que serve para mais de um projeto vai para `skills/`, nunca copiada para dentro dos projetos.
-- Skill específica fica no projeto e é coletada para `projetos/` antes de commitar aqui.
+- Toda skill fica neste repositório, nunca dentro dos projetos.
+- Skill que serve para mais de um projeto vai para `skills/`; o que muda de um projeto para outro vai para `projetos/<repo>/`.
+- Os arquivos usam LF.
 
 ## Licença
 
