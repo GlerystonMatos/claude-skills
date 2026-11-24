@@ -1,18 +1,22 @@
 ---
 name: compose-padrao
-description: Monta ou revisa o docker-compose e as variáveis de ambiente (.env.example) de um projeto no padrão do Argos (C:\Projetos\argos) — API .NET com HTTP/HTTPS, certificado montado e healthcheck, front Vite/nginx construído com VITE_API_URL e iniciado só quando a API fica saudável, rede própria e banco externo — compara variável por variável com o Argos, iguala o possível e explica as diferenças que ficam; opcionalmente prepara o ambiente local (certificado e .env com chaves geradas). Use quando o usuário pedir "dockerizar o projeto", "incluir o front no compose", "montar o compose no padrão do Argos", "deixe o compose/as variáveis iguais ao Argos" ou revisar um compose existente contra esse padrão.
+description: Monta ou revisa o docker-compose e as variáveis de ambiente (.env.example) de um projeto no padrão do Argos (repositório argos) — API .NET com HTTP/HTTPS, certificado montado e healthcheck, front Vite/nginx construído com VITE_API_URL e iniciado só quando a API fica saudável, rede própria e banco externo — compara variável por variável com o Argos, iguala o possível e explica as diferenças que ficam; opcionalmente prepara o ambiente local (certificado e .env com chaves geradas). Use quando o usuário pedir "dockerizar o projeto", "incluir o front no compose", "montar o compose no padrão do Argos", "deixe o compose/as variáveis iguais ao Argos" ou revisar um compose existente contra esse padrão.
 argument-hint: [caminho do front]
 ---
 
 # Compose no padrão do Argos
 
+`<projetos>` = pasta dos projetos desta máquina: o conteúdo de `.pasta-projetos` na raiz do `claude-skills`
+(`git -C "<pasta desta skill>" rev-parse --show-toplevel`), ou `C:\Projetos` se o arquivo não existir. Se uma pasta citada não
+existir nela, pergunte ao usuário onde está.
+
 Objetivo: um `docker-compose.yml` que sobe a API e o front juntos, igual ao do Argos, sem quebrar o que o projeto já tem.
 
 ## 1. Levantar antes de escrever
-- Leia o compose atual do projeto, o `docker-compose.yml` do Argos (`C:\Projetos\argos`) e os Dockerfiles (API e front). O Argos é a
+- Leia o compose atual do projeto, o `docker-compose.yml` do Argos (`<projetos>\argos`) e os Dockerfiles (API e front). O Argos é a
   referência de forma: indentação de 4 espaços, ordem das chaves, linhas de comando comentadas no fim do arquivo.
 - Ache o repositório do front. Se o usuário não informou o caminho, procure uma pasta irmã com `package.json` + `Dockerfile` (ex.: API em
-  `C:\Projetos\x-api` e front em `C:\Projetos\x`) e confirme com ele antes de usar. O `context` do build é **relativo** à pasta do compose
+  `<projetos>\x-api` e front em `<projetos>\x`) e confirme com ele antes de usar. O `context` do build é **relativo** à pasta do compose
   (`../x`), nunca absoluto.
 - Confira no Dockerfile do front o `ARG` do endereço da API (normalmente `VITE_API_URL`) e a porta do nginx (normalmente 8080).
 - Confira na API: endpoint de saúde (sem `[Authorize]`), se há `UseHttpsRedirection` e a configuração de CORS.
@@ -58,7 +62,7 @@ lembrando que `SECAO__CHAVE` no ambiente vira `SECAO:CHAVE`).
 - Finais de linha conforme o projeto (LF quando houver `.gitattributes`/`.editorconfig` pedindo).
 
 ## 6. Preparar o ambiente local (quando o usuário pedir)
-- Certificado: copie `C:\Projetos\argos\certificado\certificado.pfx` para `./certificado/` do projeto (nunca para pasta versionada).
+- Certificado: copie `<projetos>\argos\certificado\certificado.pfx` para `./certificado/` do projeto (nunca para pasta versionada).
 - `.env` a partir do `.env.example`, sem sobrescrever um `.env` existente sem perguntar:
   - `KESTREL_CERTIFICATE_PASSWORD` lida do `.env` do Argos, copiada **sem exibir** o valor (nem no terminal, nem na resposta).
   - Chaves novas geradas na hora (`openssl rand -base64 48` para JWT e criptografia), nunca reaproveitadas do Argos.

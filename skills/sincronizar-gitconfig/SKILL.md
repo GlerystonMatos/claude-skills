@@ -1,13 +1,16 @@
 ---
 name: sincronizar-gitconfig
-description: Sincroniza o ~/.gitconfig desta máquina com o repositório gitconfig (C:\Projetos\gitconfig, arquivo .gitconfig) — descobre qual lado mudou desde a última sincronização; o que mudou na máquina vai para o repositório com commit gerado pela texto-commit e push; o que mudou no repositório atualiza a máquina (com cópia da versão anterior); mudança dos dois lados é juntada e só o conflito é perguntado. Use quando o usuário pedir "sincronizar o gitconfig", "levar meus aliases do git para o repositório", "atualizar o gitconfig desta máquina" ou depois de criar ou alterar um alias do git.
+description: Sincroniza o ~/.gitconfig desta máquina com o arquivo .gitconfig do repositório gitconfig (na pasta dos projetos) — descobre qual lado mudou desde a última sincronização; o que mudou na máquina vai para o repositório com commit gerado pela texto-commit e push; o que mudou no repositório atualiza a máquina (com cópia da versão anterior); mudança dos dois lados é juntada e só o conflito é perguntado. Use quando o usuário pedir "sincronizar o gitconfig", "levar meus aliases do git para o repositório", "atualizar o gitconfig desta máquina" ou depois de criar ou alterar um alias do git.
 ---
 
 # Sincronizar o gitconfig
 
+`<projetos>` = pasta dos projetos desta máquina: o conteúdo de `.pasta-projetos` na raiz do `claude-skills`
+(`git -C "<pasta desta skill>" rev-parse --show-toplevel`), ou `C:\Projetos` se o arquivo não existir. Se uma pasta citada não
+existir nela, pergunte ao usuário onde está.
+
 Script: `node "<pasta desta skill>/scripts/sincronizar-gitconfig.mjs" <comando> [--repo <pasta>]`. Repositório padrão
-`C:\Projetos\gitconfig`; em outra máquina, se não existir, procure `<pasta dos projetos>\gitconfig` (a pasta fica salva em
-`claude-skills/.pasta-projetos`) ou pergunte, e passe `--repo` (ou `GITCONFIG_REPO`). O registro da última sincronização (hash do
+`<projetos>\gitconfig` (o script acha sozinho); se não existir, pergunte e passe `--repo` (ou `GITCONFIG_REPO`). O registro da última sincronização (hash do
 conteúdo) fica em `~/.gitconfig-sincronizado`, fora do repositório. As comparações ignoram CRLF/LF e espaços no fim.
 
 ## 1. Atualizar o repositório

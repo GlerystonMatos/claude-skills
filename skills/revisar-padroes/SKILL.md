@@ -1,10 +1,14 @@
 ---
 name: revisar-padroes
-description: Roda a validação completa de um projeto (build, lint, testes) e o revisa contra o pacote de padrões do Argos (C:\Projetos\argos\argos-doc\padroes) — buscas objetivas do checklist 09b (fetch solto, any/enum, export default, hex, localStorage, comentários, ordem dos imports), Docker/nginx/CI conforme 07a/07b e regras de UI de 04a/04b — e entrega um relatório com o que está no padrão, o que está fora (arquivo:linha) e o que depende de decisão. Use quando o usuário pedir "validação completa", "verificar os padrões do Argos", "o que está fora do padrão" ou "revise de novo se ficou algo pendente" num projeto que segue o Argos.
+description: Roda a validação completa de um projeto (build, lint, testes) e o revisa contra o pacote de padrões do Argos (argos-doc/padroes, no repositório argos) — buscas objetivas do checklist 09b (fetch solto, any/enum, export default, hex, localStorage, comentários, ordem dos imports), Docker/nginx/CI conforme 07a/07b e regras de UI de 04a/04b — e entrega um relatório com o que está no padrão, o que está fora (arquivo:linha) e o que depende de decisão. Use quando o usuário pedir "validação completa", "verificar os padrões do Argos", "o que está fora do padrão" ou "revise de novo se ficou algo pendente" num projeto que segue o Argos.
 argument-hint: [pasta do projeto]
 ---
 
 # Revisar contra os padrões do Argos
+
+`<projetos>` = pasta dos projetos desta máquina: o conteúdo de `.pasta-projetos` na raiz do `claude-skills`
+(`git -C "<pasta desta skill>" rev-parse --show-toplevel`), ou `C:\Projetos` se o arquivo não existir. Se uma pasta citada não
+existir nela, pergunte ao usuário onde está.
 
 Objetivo: dizer, com evidência, se o projeto passa na validação e onde ele foge dos padrões do Argos, sem corrigir nada antes do
 aval do usuário.
@@ -13,7 +17,7 @@ aval do usuário.
 - `git fetch` e compare com o remoto (`git status -sb`, `git log HEAD..origin/<branch>`). Cópia local atrasada já gerou revisão errada.
 - Leia o `CLAUDE.md` e o README do projeto. Adaptações registradas ali (ex.: Tailwind no lugar do MUI) valem: não as aponte como
   desvio, só confira se estão sendo seguidas.
-- Leia em `C:\Projetos\argos\argos-doc\padroes\` os arquivos que se aplicam: sempre `09b-checklist-front-ui-infra.md`; para front
+- Leia em `<projetos>\argos\argos-doc\padroes\` os arquivos que se aplicam: sempre `09b-checklist-front-ui-infra.md`; para front
   `03-frontend.md`, `04a-ui-tema-layouts.md` e `04b-ui-catalogo-componentes.md`; para Docker/CI `07a` e `07b`; para back-end/dados
   `09a-checklist-estrutura-back-dados.md` e os documentos que ele cita.
 

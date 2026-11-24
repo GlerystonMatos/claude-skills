@@ -1,10 +1,14 @@
 ---
 name: infra-gcp-padrao
-description: Prepara (sem aplicar) a infraestrutura GCP de um projeto no padrão do argos-infra (C:\Projetos\argos\argos-infra) — Terraform de Cloud Run, Cloud Build pela branch deploy, Artifact Registry, Firestore e SAs num projeto GCP próprio na mesma conta de faturamento, killswitch central no repositório gcp-finops (C:\Projetos\gcp-finops) — com análise de custo das cotas gratuitas divididas pela conta, conferência do que a aplicação precisa mudar para rodar no Cloud Run (CSP, limite de 32 MiB, disco em memória, variáveis, download de arquivos grandes), monitoramento das cotas na aplicação e passo a passo que nunca perde dados. Use quando o usuário pedir "criar a infra no GCP", "subir na mesma GCP do Argos", "deixar pronto para criar a infra", "quanto vai custar ter outro projeto" ou "incluir o projeto no finops".
+description: Prepara (sem aplicar) a infraestrutura GCP de um projeto no padrão do argos-infra (pasta argos-infra do repositório argos) — Terraform de Cloud Run, Cloud Build pela branch deploy, Artifact Registry, Firestore e SAs num projeto GCP próprio na mesma conta de faturamento, killswitch central no repositório gcp-finops — com análise de custo das cotas gratuitas divididas pela conta, conferência do que a aplicação precisa mudar para rodar no Cloud Run (CSP, limite de 32 MiB, disco em memória, variáveis, download de arquivos grandes), monitoramento das cotas na aplicação e passo a passo que nunca perde dados. Use quando o usuário pedir "criar a infra no GCP", "subir na mesma GCP do Argos", "deixar pronto para criar a infra", "quanto vai custar ter outro projeto" ou "incluir o projeto no finops".
 argument-hint: [pasta do projeto]
 ---
 
 # Infra GCP no padrão do Argos
+
+`<projetos>` = pasta dos projetos desta máquina: o conteúdo de `.pasta-projetos` na raiz do `claude-skills`
+(`git -C "<pasta desta skill>" rev-parse --show-toplevel`), ou `C:\Projetos` se o arquivo não existir. Se uma pasta citada não
+existir nela, pergunte ao usuário onde está.
 
 Objetivo: deixar a infra pronta para o usuário aplicar, com custo zero validado e sem risco de perder dado. **Nunca** rodar
 `terraform apply`/`destroy`, `gcloud` que altere recurso, nem push na branch `deploy` sem pedido explícito.

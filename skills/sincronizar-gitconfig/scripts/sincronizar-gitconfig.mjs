@@ -2,7 +2,8 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const ARQUIVO_LOCAL = join(homedir(), '.gitconfig');
 const ARQUIVO_ESTADO = join(homedir(), '.gitconfig-sincronizado');
@@ -29,7 +30,17 @@ function pastaRepositorio(argumentos) {
     const indice = argumentos.indexOf('--repo');
     if (indice >= 0) return argumentos[indice + 1];
     if (process.env.GITCONFIG_REPO) return process.env.GITCONFIG_REPO;
-    return 'C:\\Projetos\\gitconfig';
+    return join(pastaProjetos(), 'gitconfig');
+}
+
+function pastaProjetos() {
+    const central = spawnSync('git', ['-C', dirname(fileURLToPath(import.meta.url)), 'rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout.trim();
+    const arquivo = central ? join(central, '.pasta-projetos') : '';
+    if (arquivo && existsSync(arquivo)) {
+        const pasta = readFileSync(arquivo, 'utf8').replace(/^\uFEFF/, '').trim();
+        if (pasta) return pasta;
+    }
+    return 'C:\\Projetos';
 }
 
 function dataUltimoCommit(repo) {
