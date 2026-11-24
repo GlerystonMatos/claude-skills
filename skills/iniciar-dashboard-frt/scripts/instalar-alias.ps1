@@ -7,7 +7,7 @@ $Bloco = @'
 function Open-DashboardFrt {
     param([switch]$Redefinir)
 
-    $arquivo = Join-Path $env:APPDATA 'iniciar-dashboard-frtcredencial.xml'
+    $arquivo = Join-Path $env:APPDATA 'iniciar-dashboard-frt\credencial.xml'
     if ($Redefinir -and (Test-Path -LiteralPath $arquivo)) { Remove-Item -LiteralPath $arquivo -Force }
 
     $salva = Test-Path -LiteralPath $arquivo
@@ -68,4 +68,12 @@ foreach ($Perfil in $Perfis) {
     $Situacao = if ($SemAntigo -ne $SemMarcado) { 'substituido (versao antiga com credenciais gravadas removida)' } elseif ($SemMarcado -ne $Atual) { 'atualizado' } else { 'instalado' }
     [System.IO.File]::WriteAllText($Perfil, $Novo, [System.Text.UTF8Encoding]::new($true))
     Write-Host "$Situacao  $Perfil"
+}
+
+$CredencialAntiga = Join-Path $env:APPDATA 'iniciar-dashboard-frtcredencial.xml'
+$CredencialNova = Join-Path $env:APPDATA 'iniciar-dashboard-frt\credencial.xml'
+if ((Test-Path -LiteralPath $CredencialAntiga) -and -not (Test-Path -LiteralPath $CredencialNova)) {
+    New-Item -ItemType Directory -Path (Split-Path -Parent $CredencialNova) -Force | Out-Null
+    Move-Item -LiteralPath $CredencialAntiga -Destination $CredencialNova
+    Write-Host "credencial salva movida para $CredencialNova"
 }
