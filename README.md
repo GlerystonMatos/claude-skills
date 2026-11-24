@@ -6,7 +6,7 @@ Skills do Claude Code, versionadas num só lugar.
 
 | Pasta | Conteúdo | Instalação |
 |---|---|---|
-| `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao`, `revisar-padroes`, `infra-gcp-padrao`, `antes-do-commit`, `api-teste`, `medir-layout`) | Globais: `~/.claude/skills/<skill>` (Claude Code e opencode) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
+| `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao`, `revisar-padroes`, `infra-gcp-padrao`, `antes-do-commit`, `api-teste`, `medir-layout`, `iniciar-dashboard-frt`) | Globais: `~/.claude/skills/<skill>` (Claude Code e opencode) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
 | `projetos/<repo>/` | Configuração de cada projeto para as skills globais: `<skill>.md` (itens, portas, comandos, variáveis) e `<skill>/scripts/` | Só aqui; os projetos não guardam skills. `<repo>` = nome do repositório no `origin` |
 
 ## Instalar ou atualizar as skills globais
