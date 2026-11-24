@@ -10,7 +10,8 @@ Configuração lida pela skill global `api-teste`. Só API (o front é o `painel
    `PGPASSWORD`, sem exibir o valor.
 2. **Banco**: `node <scripts-globais>/copiar-postgres.mjs --origem atena_api_local --destino atena_api_teste --usuario postgres
    --env .env --var-senha ATENA_HOM_DATABASE_PASSWORD --temp <scratchpad>` (reaproveita a cópia; `--recriar` só quando o usuário
-   pedir ou quando uma migration nova precisar rodar de novo do zero). Dump informado pelo usuário (ex. `../dump-atena_homologacao-*.sql`) vale
+   pedir ou quando uma migration nova precisar rodar de novo do zero). Sem `.env` na máquina (há só o `.env.example`), peça ao
+   usuário a senha do PostgreSQL local para pôr em `PGPASSWORD` no ambiente e rode sem `--env`. Dump informado pelo usuário (ex. `../dump-atena_homologacao-*.sql`) vale
    no lugar do local.
 3. **Empacotar**: encerrar só a instância de teste (processo `java` escutando na 3190 — nunca a 3000) e `./mvnw -q -DskipTests package`;
    copiar `target/frota-*.jar` (sem o `.original`) para `<scratchpad>/api/atena-api.jar`.
