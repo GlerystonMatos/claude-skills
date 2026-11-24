@@ -19,7 +19,7 @@ function Get-PastaProjetos {
   }
   if (-not $Pasta -or -not (Test-Path -LiteralPath $Pasta -PathType Container)) { throw "Pasta dos projetos nao encontrada: '$Pasta'" }
   $Pasta = (Resolve-Path -LiteralPath $Pasta).Path.TrimEnd('\')
-  Set-Content -LiteralPath $ArquivoPastaSalva -Value $Pasta -Encoding UTF8
+  [IO.File]::WriteAllText($ArquivoPastaSalva, "$Pasta`n", (New-Object Text.UTF8Encoding($false)))
   return $Pasta
 }
 
@@ -45,6 +45,9 @@ function Write-Aviso([string]$Texto) {
 
 Write-Host 'Verificando o claude-skills'
 & node (Join-Path $PSScriptRoot 'scripts\verificar-repositorio.mjs')
+if ($LASTEXITCODE -ne 0) { $Avisos++ }
+Write-Host 'Testando os scripts das skills'
+& node (Join-Path $PSScriptRoot 'scripts\testar.mjs')
 if ($LASTEXITCODE -ne 0) { $Avisos++ }
 
 $Raiz = Get-PastaProjetos

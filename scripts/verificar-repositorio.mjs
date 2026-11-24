@@ -53,6 +53,15 @@ for (const arquivo of documentos) {
     }
 }
 
+const listaDoReadme = readFileSync(join(CENTRAL, 'README.md'), 'utf8').match(/Skills genéricas[^(]*\(([^)]*)\)/);
+if (!listaDoReadme) {
+    avisar('README.md', 'não achei a lista de skills da tabela "Estrutura"');
+} else {
+    const listadas = new Set([...listaDoReadme[1].matchAll(/`([^`]+)`/g)].map((m) => m[1]));
+    for (const skill of skills) if (!listadas.has(skill)) avisar('README.md', `a skill "${skill}" falta na lista da tabela "Estrutura"`);
+    for (const nome of listadas) if (!nomesDeSkill.has(nome)) avisar('README.md', `a lista da tabela "Estrutura" cita "${nome}", que não existe em skills/`);
+}
+
 const pastaProjetos = join(CENTRAL, 'projetos');
 for (const projeto of existsSync(pastaProjetos) ? readdirSync(pastaProjetos) : []) {
     const pasta = join(pastaProjetos, projeto);

@@ -7,7 +7,7 @@ Skills do Claude Code e do Codex, versionadas num só lugar.
 | Pasta | Conteúdo | Instalação |
 |---|---|---|
 | `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao`, `revisar-padroes`, `infra-gcp-padrao`, `antes-do-commit`, `api-teste`, `medir-layout`, `iniciar-dashboard-frt`, `sincronizar-gitconfig`) | Globais: `~/.claude/skills/<skill>` (Claude Code) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
-| `scripts/` | Ferramentas do repositório: `configuracao.mjs` (lê a configuração de um projeto) e `verificar-repositorio.mjs` | Não são skills; ficam fora de `skills/` |
+| `scripts/` | Ferramentas do repositório: `configuracao.mjs` (lê a configuração de um projeto), `verificar-repositorio.mjs` e `testar.mjs` | Não são skills; ficam fora de `skills/` |
 | `projetos/<repo>/` | Configuração de cada projeto para as skills globais: `<skill>.md` (itens, portas, comandos, variáveis) e `<skill>/scripts/` | Só aqui; os projetos não guardam skills. `<repo>` = nome do repositório no `origin` |
 
 ## Instalar ou atualizar as skills globais
@@ -46,7 +46,9 @@ a base e a configuração. Sem configuração para o projeto (`SEM CONFIGURACAO`
 
 Primeiro confere o próprio `claude-skills` (`scripts/verificar-repositorio.mjs`, que também roda sozinho): `name` de cada skill igual
 à pasta, `description` preenchida, skills citadas que existem, `Base:` que aponta para uma base existente, arquivos de `projetos/` que
-correspondem a uma skill e finais de linha LF no índice.
+correspondem a uma skill, a lista de skills da tabela acima e finais de linha LF no índice. Em seguida roda `scripts/testar.mjs`, que testa
+os scripts das skills em repositórios e pastas temporárias, sem tocar em nada real (configuração por projeto, usuário de teste, travas
+da cópia do PostgreSQL, linhas perdidas no rebase, estados da sincronização do gitconfig, sintaxe dos scripts Node e PowerShell).
 
 Depois pede a pasta dos projetos desta máquina (o local muda entre máquinas) e a guarda em `.pasta-projetos`, fora do git, para sugerir na
 próxima vez. Também aceita `-PastaProjetos D:\Projetos`. Procura repositórios git até 3 níveis abaixo dela e **não copia nem remove
@@ -60,10 +62,11 @@ nada**; só avisa:
 
 - Toda skill fica neste repositório, nunca dentro dos projetos.
 - Skill que serve para mais de um projeto vai para `skills/`; o que muda de um projeto para outro vai para `projetos/<repo>/`.
-- Os arquivos usam LF.
+- Os arquivos usam LF (garantido pelo `.gitattributes`, qualquer que seja o `core.autocrlf` da máquina).
+- Mexeu num script? Rode `node scripts/testar.mjs` (ou o `verificar-projetos.ps1`, que roda tudo); script novo ganha teste lá.
 - Tudo vale para o Claude Code e para o Codex: scripts chamados pela pasta da própria skill (nunca `~/.claude/...`), em Node ou
   PowerShell (não em Python), e perguntas e automação do navegador descritas sem depender de ferramenta exclusiva de um dos dois.
-- Caminhos de outros repositórios usam `<projetos>`, a pasta dos projetos da máquina (`.pasta-projetos`, ou `C:Projetos`).
+- Caminhos de outros repositórios usam `<projetos>`, a pasta dos projetos da máquina (`.pasta-projetos`, ou `C:\Projetos`).
 
 ## Licença
 

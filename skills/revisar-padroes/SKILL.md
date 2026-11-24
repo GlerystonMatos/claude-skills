@@ -45,9 +45,9 @@ Em `src/`, cada uma deve voltar vazia, salvo a exceção indicada:
 | Tooltip pelo componente | `grep -rn "title=" src` revisado (texto cortado e botão de ícone usam o componente de dica) |
 | Retorno explícito | `grep -rnE "function \w+(<[^>]*>)?\([^)]*\)\s*\{" src` |
 | Bibliotecas fora do stack | `package.json` sem roteador, estado global, cliente de consultas nem axios (ou exceção registrada) |
-| Ordem dos imports | `node <pasta desta skill>/verificar-imports.mjs --verificar $(find src -name "*.ts" -o -name "*.tsx")` |
+| Ordem dos imports | `node "<pasta desta skill>/scripts/verificar-imports.mjs" --verificar $(find src -name "*.ts" -o -name "*.tsx")` |
 
-`verificar-imports.mjs` confere a pirâmide (imports de uma linha em ordem crescente de comprimento). Sem `--verificar` ele reordena;
+`scripts/verificar-imports.mjs` confere a pirâmide (imports de uma linha em ordem crescente de comprimento). Sem `--verificar` ele reordena;
 só use assim depois do aval do usuário.
 
 Também confira o `tsconfig` (`strict`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`,
