@@ -26,18 +26,19 @@ adicionais o texto que o usuário escreveu junto da chamada.
 ## 1. Ambiente
 
 1. Suba a API e o front de teste com a skill `api-teste` e entre pelo login de teste descrito nela.
-2. No navegador (claude-in-chrome), abra uma aba nova no front de teste. Para medir no celular sem redimensionar a janela (o Chrome às
+2. Na automação do navegador disponível (no Claude Code, a extensão do Chrome; no Codex, a ferramenta de navegador da sessão), abra
+   uma aba nova no front de teste. Para medir no celular sem redimensionar a janela (o Chrome às
    vezes ignora), crie um `iframe` fixo de 390×844 com `src='/'` na própria aba (a sessão do `sessionStorage` vale nele), carregue o
    medidor dentro dele (`iframe.contentWindow.eval(...)`) e navegue pelo botão "abrir menu" do cabeçalho.
 
 ## 2. Carregar o medidor
 
-Leia `scripts/medir-layout.js` desta skill e execute o conteúdo inteiro com `javascript_tool` (uma vez por carregamento da página; um
+Leia `scripts/medir-layout.js` desta skill e execute o conteúdo inteiro na página (execução de JavaScript da ferramenta de navegador) (uma vez por carregamento da página; um
 `location.reload()` apaga). Ele cria `window.medirLayout` com:
 
 | Função | O que faz |
 |---|---|
-| `await medirLayout.fecharAvisosIniciais()` | Fecha avisos do acesso inicial ("Seguir sem importar", "Fechar"), quando o projeto tiver |
+| `await medirLayout.fecharAvisosIniciais(['texto', ...])` | Clica, em ordem, nos botões de dialog com esses textos (os avisos do acesso inicial que a configuração do projeto listar) |
 | `await medirLayout.irPara('Grupo', 'Item')` | Navega pelo menu lateral (abre o grupo se precisar) |
 | `medirLayout.medir()` | Mede o dialog aberto (ou o `main`) e devolve `{ titulo, campos, problemas }` |
 | `await medirLayout.varrer([['Grupo', 'Item'], ...])` | Navega e mede cada tela |
@@ -65,5 +66,5 @@ carregar todas as telas; use o usuário de teste da `api-teste`): diga isso ao u
 
 ## 4. Fechar
 
-Antes de concluir, olhe ao menos uma captura (`computer` → `zoom` na região) quando ela responder. Feche a aba, encerre a API e o front
+Antes de concluir, olhe ao menos uma captura de tela ampliada na região quando ela responder. Feche a aba, encerre a API e o front
 de teste e relate as medidas (antes/depois) e o que não foi possível medir.

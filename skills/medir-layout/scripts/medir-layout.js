@@ -16,8 +16,8 @@ window.medirLayout = (() => {
         return !!alvo;
     }
 
-    async function fecharAvisosIniciais() {
-        for (const texto of ['Seguir sem importar', 'Fechar']) {
+    async function fecharAvisosIniciais(textos = []) {
+        for (const texto of textos) {
             [...document.querySelectorAll('.MuiDialog-root button')].find((b) => b.textContent.trim().includes(texto))?.click();
             await espera(400);
         }

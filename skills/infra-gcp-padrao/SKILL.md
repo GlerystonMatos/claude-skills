@@ -19,7 +19,7 @@ Objetivo: deixar a infra pronta para o usuário aplicar, com custo zero validado
 - Leia o projeto: Dockerfiles, `nginx.conf` (CSP!), `Program.cs` (CORS, `UseHttpsRedirection`, endpoint de saúde), todas as variáveis
   lidas (`Configuration[...]`, `GetEnvironmentVariable`, `SECAO__CHAVE` = `SECAO:CHAVE`) e onde ficam dados e arquivos.
 - Se o `gcloud` estiver logado, meça só com leitura (`gcloud projects list`, `gcloud billing budgets list`, tamanho dos repositórios
-  do Artifact Registry e buckets). Sem login, peça `! gcloud auth login` ou deixe a medição no checklist.
+  do Artifact Registry e buckets). Sem login, peça ao usuário para rodar `gcloud auth login` (no Claude Code, `! gcloud auth login` no prompt) ou deixe a medição no checklist.
 - Procure o `terraform.tfstate` das árvores existentes: se não estiver na máquina, o `destroy` não funciona daqui — o roteiro precisa
   dizer de onde trazê-lo e ter o caminho manual.
 

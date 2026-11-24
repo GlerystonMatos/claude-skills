@@ -15,7 +15,7 @@ description: Gera o texto da mensagem de commit a partir dos arquivos em stage (
 3. Agrupe as mudanças por **funcionalidade/domínio visível ao usuário**, não por arquivo nem por camada. Use os módulos ou domínios
    citados no `CLAUDE.md` quando existirem (ex.: Abastecimento, Pneu, Manutenção, Permissões, OS). Migrations e scripts de banco entram
    no tópico do domínio citando o número. Mudanças só de docs (`CLAUDE.md`, `AGENTS.md`, `docs/`, READMEs, manuais) e de configuração
-   dos agentes (`.claude/`, `.agents/`, `.opencode/`) entram como um tópico final curto. Versão (`.ver`, changelog) entra como tópico
+   dos agentes (`.claude/`, `.agents/`, `.codex/`) entram como um tópico final curto. Versão (`.ver`, changelog) entra como tópico
    final citando a versão. Mudança grande em back e front: agrupe os tópicos sob `Back-end:` e `Front-end:`.
 4. Formato:
    - 1ª linha no padrão do passo 2, ≤ 72 caracteres quando possível (vários assuntos: liste os principais separados por vírgula/"e").

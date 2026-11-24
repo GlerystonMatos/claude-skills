@@ -1,15 +1,19 @@
 ---
 name: iniciar-ambiente-docker
-description: Reinicia o ambiente Docker do projeto atual a partir do zero — derruba os containers (docker-compose down), remove as imagens cujo nome contém a palavra informada e sobe tudo de novo (docker-compose up -d), reconstruindo as imagens. Recebe uma palavra obrigatória (ex.: "iniciar-ambiente-docker argos" remove as imagens com "argos" no nome). Use quando o usuário pedir "iniciar ambiente docker", "reiniciar o docker do <projeto>", "recriar as imagens" ou chamar /iniciar-ambiente-docker <palavra>.
-argument-hint: <palavra das imagens>
+description: Reinicia o ambiente Docker do projeto atual a partir do zero — derruba os containers (docker-compose down), remove as imagens cujo nome contém a palavra informada e sobe tudo de novo (docker-compose up -d), reconstruindo as imagens. Recebe uma palavra (ex.: "iniciar-ambiente-docker argos" remove as imagens com "argos" no nome); sem ela, usa a palavra padrão do projeto (projetos/<repo>/iniciar-ambiente-docker.md no claude-skills). Use quando o usuário pedir "iniciar ambiente docker", "reiniciar o docker do <projeto>", "recriar as imagens" ou chamar /iniciar-ambiente-docker <palavra> (no Codex, $iniciar-ambiente-docker <palavra>).
+argument-hint: "[palavra das imagens]"
 ---
 
 # Iniciar ambiente Docker
 
 Equivale a `docker-compose down ; docker rmi $(imagens com a palavra) ; docker-compose up -d`, com a palavra no lugar do nome do projeto.
 
-1. **Palavra**: é o argumento da chamada (ex.: `/iniciar-ambiente-docker argos` → `argos`). Sem palavra, pergunte qual usar e pare. Aceite só
-   letras, números, `.`, `_` e `-` (ela entra num filtro de shell); outra coisa → recuse e explique.
+1. **Palavra**: é o argumento da chamada (ex.: `/iniciar-ambiente-docker argos` no Claude Code ou `$iniciar-ambiente-docker argos`
+   no Codex → `argos`). Sem argumento, rode na raiz do projeto
+   `node "$(git -C "<pasta desta skill>" rev-parse --show-toplevel)/scripts/configuracao.mjs" iniciar-ambiente-docker` e use a linha
+   `Palavra: <palavra>` da configuração; sem configuração, pergunte qual usar e pare (e proponha gravá-la em
+   `projetos/<repositorio>/iniciar-ambiente-docker.md`, seguindo as regras do `claude-skills`). Aceite só letras, números, `.`, `_` e
+   `-` (ela entra num filtro de shell); outra coisa → recuse e explique.
 2. **Pasta**: rode na raiz do projeto atual, onde está o `docker-compose.yml` (ou `compose.yml`). Sem arquivo de compose → avise e pare.
 3. **Comando do compose**: use `docker-compose`; se não existir, `docker compose`. Docker parado (`docker info` falha) → avise e pare.
 4. **Derrubar**: `docker-compose down`.

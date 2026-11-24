@@ -12,7 +12,8 @@ Considere como instruções adicionais o texto que o usuário escreveu junto da 
 
 - **Nunca** usar os dados, o banco ou o armazenamento originais, nem homologação ou produção. Só a cópia.
 - **Nunca** derrubar a API ou o front do usuário: encerre apenas processos que escutam nas portas de teste, confirmando pela porta.
-- `<scratchpad>` = pasta temporária da sessão do agente, nunca dentro do repositório.
+- `<scratchpad>` = pasta temporária da sessão (no Claude Code, o scratchpad da sessão; no Codex, `%TEMP%\api-teste-<repositorio>`),
+  nunca dentro do repositório.
 - **Nunca** exibir senhas, tokens, chaves nem valores do `.env`; passe-os direto ao ambiente do processo.
 - Arquivo de sessão ou token gravado em `public/` para o navegador é **apagado na mesma hora** e nunca vai para o git.
 - Serviços externos bloqueados por proxy morto, salvo o que a configuração liberar.
@@ -72,7 +73,8 @@ o projeto exigir (outra empresa/cliente → 404, sem permissão → 403).
 - Login sem digitar senha: gere o arquivo de sessão em `public/` com o script da configuração, carregue no `sessionStorage` pela
   própria página (`sessionStorage.setItem('<chave>', ... await (await fetch('/<arquivo>')).text() ...)` + `location.reload()`) e
   **apague o arquivo na hora**. O token vale até a API reiniciar.
-- Abra uma aba nova (claude-in-chrome), valide pelo DOM (`javascript_tool`), uma ação por chamada. A captura de tela às vezes trava
+- Abra uma aba nova na automação do navegador disponível (no Claude Code, a extensão do Chrome; no Codex, a ferramenta de navegador
+  da sessão) e valide pelo DOM, executando JavaScript na página, uma ação por chamada. A captura de tela às vezes trava
   ("renderer may be frozen"): meça pelo DOM e tente de novo depois; não conclua nada sem medida.
 - Confira 360–400 px (ou `iframe` fixo de 390×844 com `src='/'`, onde a sessão do `sessionStorage` vale), notebooks de 14"
   (1280×720, 1366×768, 1536×864) e os temas claro e escuro. Medidas de layout: skill `medir-layout`.

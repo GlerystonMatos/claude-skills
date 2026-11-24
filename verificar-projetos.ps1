@@ -43,6 +43,10 @@ function Write-Aviso([string]$Texto) {
   $script:Avisos++
 }
 
+Write-Host 'Verificando o claude-skills'
+& node (Join-Path $PSScriptRoot 'scripts\verificar-repositorio.mjs')
+if ($LASTEXITCODE -ne 0) { $Avisos++ }
+
 $Raiz = Get-PastaProjetos
 Write-Host "Verificando os projetos em $Raiz (nada e copiado nem removido)"
 $Encontrados = @{}
@@ -70,4 +74,4 @@ Get-ChildItem -LiteralPath $PastaConfiguracoes -Directory | Where-Object { -not 
   Write-Host "info:  projetos/$($_.Name) nao tem repositorio local nesta maquina (o nome vem do remote origin); se o projeto acabou, apague a pasta"
 }
 
-if ($Avisos -eq 0) { Write-Host 'Nenhuma skill local encontrada nos projetos.' }
+if ($Avisos -eq 0) { Write-Host 'Tudo certo: claude-skills consistente e nenhuma skill local nos projetos.' }
