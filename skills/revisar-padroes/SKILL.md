@@ -1,5 +1,5 @@
 ---
-name: revisar-padroes-argos
+name: revisar-padroes
 description: Roda a validação completa de um projeto (build, lint, testes) e o revisa contra o pacote de padrões do Argos (C:\Projetos\argos\argos-doc\padroes) — buscas objetivas do checklist 09b (fetch solto, any/enum, export default, hex, localStorage, comentários, ordem dos imports), Docker/nginx/CI conforme 07a/07b e regras de UI de 04a/04b — e entrega um relatório com o que está no padrão, o que está fora (arquivo:linha) e o que depende de decisão. Use quando o usuário pedir "validação completa", "verificar os padrões do Argos", "o que está fora do padrão" ou "revise de novo se ficou algo pendente" num projeto que segue o Argos.
 argument-hint: [pasta do projeto]
 ---

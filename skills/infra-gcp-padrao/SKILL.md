@@ -1,5 +1,5 @@
 ---
-name: infra-gcp-padrao-argos
+name: infra-gcp-padrao
 description: Prepara (sem aplicar) a infraestrutura GCP de um projeto no padrão do argos-infra (C:\Projetos\argos\argos-infra) — Terraform de Cloud Run, Cloud Build pela branch deploy, Artifact Registry, Firestore e SAs num projeto GCP próprio na mesma conta de faturamento, killswitch central no repositório gcp-finops (C:\Projetos\gcp-finops) — com análise de custo das cotas gratuitas divididas pela conta, conferência do que a aplicação precisa mudar para rodar no Cloud Run (CSP, limite de 32 MiB, disco em memória, variáveis, download de arquivos grandes), monitoramento das cotas na aplicação e passo a passo que nunca perde dados. Use quando o usuário pedir "criar a infra no GCP", "subir na mesma GCP do Argos", "deixar pronto para criar a infra", "quanto vai custar ter outro projeto" ou "incluir o projeto no finops".
 argument-hint: [pasta do projeto]
 ---

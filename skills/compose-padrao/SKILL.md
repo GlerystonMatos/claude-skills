@@ -1,5 +1,5 @@
 ---
-name: compose-padrao-argos
+name: compose-padrao
 description: Monta ou revisa o docker-compose e as variáveis de ambiente (.env.example) de um projeto no padrão do Argos (C:\Projetos\argos) — API .NET com HTTP/HTTPS, certificado montado e healthcheck, front Vite/nginx construído com VITE_API_URL e iniciado só quando a API fica saudável, rede própria e banco externo — compara variável por variável com o Argos, iguala o possível e explica as diferenças que ficam; opcionalmente prepara o ambiente local (certificado e .env com chaves geradas). Use quando o usuário pedir "dockerizar o projeto", "incluir o front no compose", "montar o compose no padrão do Argos", "deixe o compose/as variáveis iguais ao Argos" ou revisar um compose existente contra esse padrão.
 argument-hint: [caminho do front]
 ---
