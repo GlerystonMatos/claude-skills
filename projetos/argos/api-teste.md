@@ -1,4 +1,4 @@
-Base: padrao-argos
+Base: argos
 
 # API e front de teste — Argos
 

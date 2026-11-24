@@ -50,7 +50,7 @@ if (!existsSync(arquivoProjeto)) {
 const projeto = ler(arquivoProjeto);
 const base = projeto.match(/^Base:\s*(\S+)/);
 if (base) {
-    const relativoBase = `projetos/_${base[1]}/${skill}.md`;
+    const relativoBase = `projetos/${base[1]}/padrao/${skill}.md`;
     if (!existsSync(join(CENTRAL, relativoBase))) {
         console.log(`ERRO: ${relativoProjeto} aponta para a base ${relativoBase}, que não existe.`);
         process.exit(4);

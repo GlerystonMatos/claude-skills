@@ -1,4 +1,4 @@
-Base: padrao-argos
+Base: argos
 
 # Antes do commit — Íris
 

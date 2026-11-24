@@ -59,6 +59,12 @@ for (const projeto of existsSync(pastaProjetos) ? readdirSync(pastaProjetos) : [
     if (!statSync(pasta).isDirectory()) continue;
     for (const item of readdirSync(pasta)) {
         const caminho = join(pasta, item);
+        if (item === 'padrao' && statSync(caminho).isDirectory()) {
+            for (const arquivoBase of readdirSync(caminho)) {
+                if (!nomesDeSkill.has(arquivoBase.replace(/\.md$/, ''))) avisar(relativo(join(caminho, arquivoBase)), 'não corresponde a nenhuma skill de skills/');
+            }
+            continue;
+        }
         const nomeSkill = item.replace(/\.md$/, '');
         if (!nomesDeSkill.has(nomeSkill)) {
             avisar(relativo(caminho), `não corresponde a nenhuma skill de skills/`);
@@ -66,7 +72,7 @@ for (const projeto of existsSync(pastaProjetos) ? readdirSync(pastaProjetos) : [
         }
         if (!item.endsWith('.md')) continue;
         const base = readFileSync(caminho, 'utf8').match(/^Base:\s*(\S+)/);
-        if (base && !existsSync(join(pastaProjetos, `_${base[1]}`, item))) avisar(relativo(caminho), `Base "${base[1]}" sem projetos/_${base[1]}/${item}`);
+        if (base && !existsSync(join(pastaProjetos, base[1], "padrao", item))) avisar(relativo(caminho), `Base "${base[1]}" sem projetos/${base[1]}/padrao/${item}`);
     }
 }
 

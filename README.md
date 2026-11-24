@@ -30,8 +30,9 @@ projeto, em `projetos/<repo>/<skill>.md` (e scripts em `projetos/<repo>/<skill>/
 `..` não serve): o script acha o projeto pelo nome do repositório em `git remote get-url origin` (sem remote, o nome da pasta) e mostra
 a base e a configuração. Sem configuração para o projeto (`SEM CONFIGURACAO`), a skill avisa e propõe criar o arquivo na hora.
 
-- **Base comum**: a configuração que começa com `Base: <nome>` herda `projetos/_<nome>/<skill>.md` e só traz o que muda. Hoje há
-  `_padrao-argos` (projetos .NET + React/MUI com armazenamento em documentos, como argos e iris).
+- **Base comum**: a configuração que começa com `Base: <repo>` herda `projetos/<repo>/padrao/<skill>.md`, o padrão que aquele
+  projeto define para os outros, e só traz o que muda. Hoje há `projetos/argos/padrao/` (projetos .NET + React/MUI com armazenamento
+  em documentos), usado por argos e iris com `Base: argos`.
 - **Scripts compartilhados** em `skills/<skill>/scripts/` (ex.: `api-teste/scripts/usuario-teste.mjs` e `copiar-postgres.mjs`); em
   `projetos/<repo>/<skill>/scripts/` fica só o que é de um projeto.
 - A configuração traz só o que a skill e o `CLAUDE.md` do projeto não dizem: itens de domínio, espelho de tipos, repositórios

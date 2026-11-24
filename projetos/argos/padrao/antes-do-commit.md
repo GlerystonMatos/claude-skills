@@ -1,6 +1,6 @@
 # Antes do commit — base do padrão do Argos
 
-Base comum lida pela skill global `antes-do-commit` quando a configuração do projeto começa com `Base: padrao-argos`. Vale para
+Base comum lida pela skill global `antes-do-commit` quando a configuração do projeto começa com `Base: argos`. Vale para
 projetos .NET + React/MUI com armazenamento em documentos (JSON/Firestore) no padrão do Argos. `<doc>` = pasta de documentação do
 projeto (`argos-doc`, `iris-doc`…), `<back>`/`<front>` = pastas da API e do front; a configuração do projeto diz quais são.
 

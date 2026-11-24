@@ -1,6 +1,6 @@
 # API e front de teste — base do padrão do Argos
 
-Base comum lida pela skill global `api-teste` quando a configuração do projeto começa com `Base: padrao-argos`. A configuração do
+Base comum lida pela skill global `api-teste` quando a configuração do projeto começa com `Base: argos`. A configuração do
 projeto preenche os marcadores: `<back>`/`<front>` (pastas), `<projeto Api>` (projeto .NET da API), `<exe>` (nome do executável),
 `<porta API>`/`<porta front>` (teste), as portas do usuário, `<dados>` (pasta da cópia com `AppUsuarios.json`), `<modelo>` do usuário de
 teste (`argos` ou `iris`), `<chave sessão>` do `sessionStorage` e as variáveis próprias.

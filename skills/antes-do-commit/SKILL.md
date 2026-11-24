@@ -21,7 +21,7 @@ da chamada.
 2. **`SEM CONFIGURACAO`**: avise e proponha criar `projetos/<repositorio>/antes-do-commit.md` a partir do que o projeto mostra
    (`CLAUDE.md`/`AGENTS.md`, README, stack, scripts de build, pasta de docs, migrations, repositórios vizinhos). Só o que **não**
    está nesta skill nem no `CLAUDE.md`: itens de domínio, espelho de tipos, relacionados, exceções de finais de linha e comandos fora
-   do comum; projeto no padrão do Argos usa `Base: padrao-argos`. Mostre o rascunho e só crie com aprovação; ao criar, siga as regras
+   do comum; projeto no padrão do Argos usa `Base: argos`. Mostre o rascunho e só crie com aprovação; ao criar, siga as regras
    do `claude-skills` (LF, `git pull --ff-only` antes, commit com a `texto-commit` e push). Sem aprovação, rode só os itens
    genéricos abaixo e diga que os específicos ficaram de fora.
 
@@ -64,7 +64,7 @@ existente):
 - C#: tipo explícito no lugar de `var`, `using` em ordem alfabética;
 - sem imports não usados nem código morto.
 
-Projeto no padrão do Argos (`Base: padrao-argos`, ou o `CLAUDE.md` cita `argos-doc/padroes`): rode também as **buscas objetivas** da
+Projeto no padrão do Argos (`Base: argos`, ou o `CLAUDE.md` cita `argos-doc/padroes`): rode também as **buscas objetivas** da
 skill `revisar-padroes` (`<central>/skills/revisar-padroes/SKILL.md`, seção "Buscas objetivas") restritas aos arquivos alterados.
 Adaptações registradas no `CLAUDE.md` do projeto valem.
 
