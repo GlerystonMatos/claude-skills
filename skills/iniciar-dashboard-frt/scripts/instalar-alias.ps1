@@ -5,19 +5,41 @@ $Fim = '# <<< iniciar-dashboard-frt'
 $Bloco = @'
 # >>> iniciar-dashboard-frt
 function Open-DashboardFrt {
-    $email = Read-Host 'E-mail'
-    $senhaSegura = Read-Host 'Senha' -AsSecureString
-    $senha = [System.Net.NetworkCredential]::new('', $senhaSegura).Password
-    $corpo = [System.Text.Encoding]::UTF8.GetBytes((@{ email = $email; senha = $senha } | ConvertTo-Json -Compress))
-    $senha = $null
+    param([switch]$Redefinir)
+
+    $arquivo = Join-Path $env:APPDATA 'iniciar-dashboard-frtcredencial.xml'
+    if ($Redefinir -and (Test-Path -LiteralPath $arquivo)) { Remove-Item -LiteralPath $arquivo -Force }
+
+    $salva = Test-Path -LiteralPath $arquivo
+    if ($salva) {
+        $credencial = Import-Clixml -LiteralPath $arquivo
+    } else {
+        $email = Read-Host 'E-mail'
+        $senhaSegura = Read-Host 'Senha' -AsSecureString
+        $credencial = [System.Management.Automation.PSCredential]::new($email, $senhaSegura)
+    }
+
+    $corpo = [System.Text.Encoding]::UTF8.GetBytes((@{ email = $credencial.UserName; senha = $credencial.GetNetworkCredential().Password } | ConvertTo-Json -Compress))
     try {
         $r = Invoke-RestMethod -Method Post `
             -Uri 'https://dashboard-frt-api.veica.com.br/Login/Authenticate' `
             -ContentType 'application/json; charset=utf-8' `
             -Body $corpo `
             -ErrorAction Stop
+    } catch {
+        $status = [int]$_.Exception.Response.StatusCode
+        if ($salva -and $status -ge 400 -and $status -lt 500) {
+            Remove-Item -LiteralPath $arquivo -Force
+            Write-Host 'Login recusado com a credencial salva; ela foi apagada e sera pedida de novo.' -ForegroundColor Yellow
+        }
+        throw
     } finally {
         $corpo = $null
+    }
+
+    if (-not $salva) {
+        New-Item -ItemType Directory -Path (Split-Path -Parent $arquivo) -Force | Out-Null
+        $credencial | Export-Clixml -LiteralPath $arquivo
     }
 
     Start-Process "https://dashboard-frt.veica.com.br/?token=$([uri]::EscapeDataString($r.token))"
