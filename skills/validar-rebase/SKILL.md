@@ -26,10 +26,10 @@ Objetivo: o commit que veio de fora entra inteiro, o trabalho local continua int
 5. `git add` nos resolvidos e `GIT_EDITOR=true git rebase --continue` até terminar.
 
 ## 3. Provar que nada se perdeu
-Rode `scripts/linhas_perdidas.py` na raiz do repositório:
+Rode `scripts/linhas-perdidas.mjs` (Node) na raiz do repositório:
 
 ```bash
-python <pasta-da-skill>/scripts/linhas_perdidas.py <commit-de-fora> <base> <commit-local-rebaseado>
+node "<pasta desta skill>/scripts/linhas-perdidas.mjs" <commit-de-fora> <base> <commit-local-rebaseado>
 ```
 
 - `<commit-de-fora>`: o commit que veio da origem; `<base>`: o pai dele; `<commit-local-rebaseado>`: o seu commit depois do rebase
