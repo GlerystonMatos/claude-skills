@@ -1,6 +1,6 @@
 ---
 name: antes-do-commit
-description: Checklist antes de commitar em qualquer projeto — confere a origem, aplica os itens específicos do projeto (guardados no repositório claude-skills em projetos/<repo>/antes-do-commit.md), os padrões, os finais de linha, os arquivos de progresso e o checklist de validação, e roda build, testes e lint, corrigindo o que faltar. Sem configuração para o projeto, propõe criá-la. Use quando o usuário pedir "antes do commit", "atualize o que for necessário antes do commit", "deixe pronto para commit" ou ao terminar uma funcionalidade.
+description: Checklist antes de commitar em qualquer projeto — confere a origem, aplica os itens específicos do projeto (guardados no repositório claude-skills em projetos/<repo>/antes-do-commit.md, com base comum opcional), as regras básicas e os padrões, o espelho de tipos entre front e back, os repositórios relacionados, os finais de linha, os arquivos de progresso e o checklist de validação, e roda build, testes e lint, corrigindo o que faltar. Sem configuração para o projeto, propõe criá-la. Use quando o usuário pedir "antes do commit", "atualize o que for necessário antes do commit", "deixe pronto para commit" ou ao terminar uma funcionalidade.
 argument-hint: "[instruções adicionais]"
 ---
 
@@ -15,12 +15,15 @@ da chamada.
 1. Repositório central: `CENTRAL=$(git -C "<pasta desta skill>" rev-parse --show-toplevel)` (a pasta da skill é uma junção para
    `claude-skills/skills/antes-do-commit`; `..` não serve).
 2. Projeto: `REPO=$(basename -s .git "$(git remote get-url origin)")`; sem remote, o nome da pasta raiz do git.
-3. Leia `$CENTRAL/projetos/$REPO/antes-do-commit.md`. Os itens dele valem junto com os desta skill e, quando divergirem (comandos,
-   finais de linha, exceções), prevalecem.
+3. Leia `$CENTRAL/projetos/$REPO/antes-do-commit.md`. Se ele começar com `Base: <nome>`, leia antes
+   `$CENTRAL/projetos/_<nome>/antes-do-commit.md`: a base vale para todos os projetos daquele padrão e a configuração do projeto
+   completa e, quando divergir, prevalece. Os itens das configurações valem junto com os desta skill e prevalecem sobre ela.
 4. **Sem o arquivo**: avise e proponha criá-lo a partir do que o projeto mostra (`CLAUDE.md`/`AGENTS.md`, README, stack, scripts de
-   build, `.editorconfig`/`.gitattributes`, pasta de docs, migrations). Mostre o rascunho e só crie com aprovação; ao criar, siga as
-   regras do `claude-skills` (LF, `git pull --ff-only` antes, commit com a `texto-commit` e push). Sem aprovação, rode só os itens
-   genéricos abaixo e diga que os específicos ficaram de fora.
+   build, pasta de docs, migrations, repositórios vizinhos). Só o que **não** está nesta skill nem no `CLAUDE.md`: itens de domínio,
+   espelho de tipos, relacionados, exceções de finais de linha e comandos fora do comum; projeto no padrão do Argos usa
+   `Base: padrao-argos`. Mostre o rascunho e só crie com aprovação; ao criar, siga as regras do `claude-skills` (LF,
+   `git pull --ff-only` antes, commit com a `texto-commit` e push). Sem aprovação, rode só os itens genéricos abaixo e diga que os
+   específicos ficaram de fora.
 
 ## 1. Origem
 
@@ -30,52 +33,78 @@ conflito; se não, use a skill `validar-rebase`. Confirme que nada do commit de 
 
 ## 2. Itens específicos do projeto
 
-Percorra cada item do arquivo de configuração (documentos do armazenamento e migrações, permissões, espelho de tipos com os DTOs,
-contratos com outros clientes, versão etc.) e corrija o que a mudança exigir.
+Percorra cada item da base e da configuração (documentos do armazenamento e migrações, permissões, contratos, versão etc.) e corrija o
+que a mudança exigir.
 
-## 3. Documentação
+## 3. Espelho de tipos e repositórios relacionados
+
+- **Espelho de tipos** (a configuração diz quais são os dois lados, ex.: `src/api/tipos.ts` × records C#): endpoint, request ou
+  response mudou → o outro lado acompanha na mesma tarefa, com os mesmos nomes e propriedades; endpoint usado pelo front existe na API.
+- **Relacionados** (a configuração lista os repositórios vizinhos, ex.: a API de um front): contrato mudou (rota, DTO, status, regra
+  de cálculo exibida) → confira o outro repositório, se estiver na máquina, e **avise no relatório** o que precisa acompanhar. Não
+  altere outro repositório por conta própria.
+
+## 4. Documentação
 
 - **Regra não óbvia** nova ou revertida: registrar no documento certo (índice no `CLAUDE.md`/`AGENTS.md` ou o indicado na
   configuração), sucinto, só o estado atual, sem duplicar nem criar nota solta.
 - Comando, variável de ambiente, estrutura ou fluxo mudou: `README.md` e `.env.example`. Regra que vale sempre mudou: `CLAUDE.md`/
   `AGENTS.md`.
 
-## 4. Padrões
+## 5. Regras básicas e padrões
 
-- Aplique as regras do `CLAUDE.md`/`AGENTS.md` e do documento de padrões do projeto nos arquivos alterados.
-- Projeto no padrão do Argos (a configuração diz, ou o `CLAUDE.md` cita `argos-doc/padroes`): rode as **buscas objetivas** da skill
-  `revisar-padroes-argos` (`$CENTRAL/skills/revisar-padroes-argos/SKILL.md`, seção "Buscas objetivas") restritas aos arquivos
-  alterados, em vez de repetir as regras aqui. Adaptações registradas no `CLAUDE.md` do projeto valem.
+Nos arquivos alterados, aplique as regras do `CLAUDE.md`/`AGENTS.md` e do documento de padrões do projeto. As **regras básicas**
+abaixo valem quando o projeto as adota (o `CLAUDE.md`, o documento de padrões ou a configuração dizem; na dúvida, confira o código
+existente):
 
-## 5. Finais de linha
+- **sem comentários** no código (inclusive testes; diretivas técnicas e arquivos de configuração são exceção);
+- nomes, mensagens e interface em **pt-BR**;
+- TypeScript: sem `any` nem `enum`, `import type` para tipos, imports em **pirâmide** (uma linha por comprimento crescente, depois os
+  multilinha; no MUI, `@mui/material` por último), nenhuma cor hex fora do arquivo de tema/estilos globais;
+- C#: tipo explícito no lugar de `var`, `using` em ordem alfabética;
+- sem imports não usados nem código morto.
 
-Regras em `.gitattributes`/`.editorconfig` (ou na configuração). Para cada arquivo de `git diff --name-only HEAD` e os novos:
+Projeto no padrão do Argos (`Base: padrao-argos`, ou o `CLAUDE.md` cita `argos-doc/padroes`): rode também as **buscas objetivas** da
+skill `revisar-padroes` (`$CENTRAL/skills/revisar-padroes/SKILL.md`, seção "Buscas objetivas") restritas aos arquivos alterados.
+Adaptações registradas no `CLAUDE.md` do projeto valem.
+
+## 6. Finais de linha
+
+Regras em `.gitattributes`/`.editorconfig`; a configuração só traz exceções. Para cada arquivo de `git diff --name-only HEAD` e os
+novos:
 
 - `git ls-files --eol -- <arquivos>`: coluna `i/` = índice, `w/` = pasta; BOM pelos primeiros bytes (`head -c3 <arquivo> | od -c`).
 - CRLF que falta: `perl -pi -e 's/(?<!\r)\n/\r\n/' <arquivo>` (respeita arquivo sem quebra no fim). LF: `perl -pi -e 's/\r\n/\n/'`.
   O `sed -i` do Git Bash troca CRLF por LF sem avisar; confira depois de usá-lo.
-- Com `text=auto`/`eol` no `.gitattributes`, confirme que `git add` não muda o conteúdo além do esperado.
-- UTF-8 sem BOM e newline no fim, salvo regra contrária do projeto. Arquivos legados citados na configuração não são tocados.
+- Com `text=auto`/`eol` no `.gitattributes`, o índice fica em LF; confirme que a conversão não mudou o conteúdo (`git add` +
+  `git diff --cached --ignore-cr-at-eol` vazio, ou `git write-tree` igual).
+- UTF-8 sem BOM e newline no fim, salvo regra contrária do projeto.
 
-## 6. Arquivos de progresso
+## 7. Arquivos de progresso
 
 Arquivos de progresso e pendências do projeto (`.claude/progress-*.md`, `progresso.md` e os que a configuração citar): confira no
 código cada item marcado como concluído e remova os concluídos (frentes, decisões e fases já entregues), deixando só as pendências
 reais com o mínimo para retomar. Sem pendência num arquivo temporário (`.claude/progress-*.md`), apague-o (`git rm`). Item que o
 código não confirma continua no arquivo. Documento permanente de progresso só é atualizado, nunca apagado.
 
-## 7. Checklist de validação
+## 8. Checklist de validação
 
 Pedido implementado e o projeto tem checklist de validação: inclua os itens com a skill `checklist-prompt`.
 
-## 8. Validação
+## 9. Validação
 
-Rode os comandos da configuração; sem eles, os que o projeto tiver (`dotnet build` + `dotnet test`, `npm run build` + `lint` +
-`test`, `./mvnw compile` + `test`). Tudo limpo, sem warnings novos. Falhou → corrigir e repetir; reportar a saída se não der.
-Validação que depende de algo indisponível (banco, Docker, navegador) fica como pendente no relatório, dita com clareza. Tela mexida
-→ conferir no navegador com a skill `api-teste` quando der.
+Rode os comandos da configuração; sem eles, os que o projeto tiver:
 
-## 9. Fim
+- **.NET**: `dotnet build <solução>` com **0 warnings** (`MSB3026`/`MSB3027` = a API está rodando e travando a dll: reinicie) e
+  `dotnet test` no projeto de testes, se houver;
+- **Node**: os scripts do `package.json` que existirem — `npm run build`, `npm run lint`, `npm test`;
+- **Maven**: `./mvnw -q clean compile` e `./mvnw test`.
+
+Tudo limpo, sem warnings novos. Falhou → corrigir e repetir; reportar a saída se não der. Validação que depende de algo indisponível
+(banco, Docker, navegador) fica como pendente no relatório, dita com clareza. Tela mexida → conferir no navegador com a skill
+`api-teste` quando der.
+
+## 10. Fim
 
 Não commitar por conta própria; sugerir a skill `texto-commit` para a mensagem. Relatório: o que foi alterado em cada item, o que não
-se aplicava e o que ficou pendente.
+se aplicava, o que ficou pendente e o que os repositórios relacionados precisam acompanhar.

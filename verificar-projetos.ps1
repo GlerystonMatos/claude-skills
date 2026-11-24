@@ -66,7 +66,7 @@ Get-RepositoriosDosProjetos $Raiz | ForEach-Object {
   }
 }
 
-Get-ChildItem -LiteralPath $PastaConfiguracoes -Directory | Where-Object { -not $Encontrados.ContainsKey($_.Name) } | ForEach-Object {
+Get-ChildItem -LiteralPath $PastaConfiguracoes -Directory | Where-Object { -not $_.Name.StartsWith("_") -and -not $Encontrados.ContainsKey($_.Name) } | ForEach-Object {
   Write-Host "info:  projetos/$($_.Name) nao tem repositorio local nesta maquina (o nome vem do remote origin); se o projeto acabou, apague a pasta"
 }
 

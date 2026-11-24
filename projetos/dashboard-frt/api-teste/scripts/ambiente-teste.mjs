@@ -1,7 +1,8 @@
 import { createHmac, randomBytes, randomUUID } from 'node:crypto';
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, openSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import { copiarBanco, executarPg } from '../../../../skills/api-teste/scripts/copiar-postgres.mjs';
 
 const BANCO_TESTE = 'dashboard_frt_teste';
 const PORTA_API = 5290;
@@ -27,22 +28,6 @@ function lerEnvApi() {
         if (correspondencia) valores[correspondencia[1]] = correspondencia[2].replace(/^["']|["']$/g, '');
     }
     return valores;
-}
-
-function localizarBinPostgres() {
-    if (process.env.PG_BIN) return process.env.PG_BIN;
-    const raiz = 'C:\\Program Files\\PostgreSQL';
-    if (!existsSync(raiz)) return '';
-    const versoes = readdirSync(raiz)
-        .filter((versao) => existsSync(join(raiz, versao, 'bin', 'psql.exe')))
-        .sort((a, b) => Number(b) - Number(a));
-    return versoes.length > 0 ? join(raiz, versoes[0], 'bin') : '';
-}
-
-const BIN_PG = localizarBinPostgres();
-
-function comandoPg(nome) {
-    return BIN_PG ? join(BIN_PG, `${nome}.exe`) : nome;
 }
 
 function lerConexao(texto) {
@@ -76,16 +61,6 @@ function textoConexao(conexao, banco) {
     return `Host=${conexao.host};Port=${conexao.porta};Database=${banco};Username=${conexao.usuario};Password=${conexao.senha}`;
 }
 
-function executarPg(nome, argumentos, conexao) {
-    const resultado = spawnSync(comandoPg(nome), ['-h', conexao.host, '-p', conexao.porta, '-U', conexao.usuario, ...argumentos], {
-        env: { ...process.env, PGPASSWORD: conexao.senha },
-        encoding: 'utf8',
-    });
-    if (resultado.error) sair(`Falha ao executar ${nome}: ${resultado.error.message}`);
-    if (resultado.status !== 0) sair(`${nome} falhou: ${resultado.stderr.trim()}`);
-    return resultado.stdout;
-}
-
 function caminhoConfig(scratch) {
     return join(scratch, 'api-teste.json');
 }
@@ -100,21 +75,7 @@ function banco(scratch, recriar) {
     mkdirSync(scratch, { recursive: true });
     const origem = conexaoOrigem();
     if (origem.banco === BANCO_TESTE) sair('A conexão de origem já aponta para o banco de teste.');
-    const existe = executarPg('psql', ['-d', 'postgres', '-tAc', `select 1 from pg_database where datname = '${BANCO_TESTE}'`], origem).trim() === '1';
-
-    if (existe && recriar) {
-        executarPg('dropdb', ['--force', BANCO_TESTE], origem);
-    }
-    if (!existe || recriar) {
-        const arquivoCopia = join(scratch, 'banco-origem.dump');
-        executarPg('pg_dump', ['-Fc', '-f', arquivoCopia, origem.banco], origem);
-        executarPg('createdb', [BANCO_TESTE], origem);
-        executarPg('pg_restore', ['--no-owner', '--no-privileges', '-d', BANCO_TESTE, arquivoCopia], origem);
-        rmSync(arquivoCopia, { force: true });
-        console.log(`Banco ${BANCO_TESTE} copiado de ${origem.banco}.`);
-    } else {
-        console.log(`Banco ${BANCO_TESTE} já existe; reaproveitado (use --recriar para copiar de novo).`);
-    }
+    copiarBanco(origem, origem.banco, BANCO_TESTE, { recriar, pastaTemporaria: scratch });
 
     const caminho = caminhoConfig(scratch);
     const anterior = existsSync(caminho) ? lerJson(caminho) : {};

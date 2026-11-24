@@ -2,6 +2,8 @@
 
 Itens específicos lidos pela skill global `antes-do-commit`. Java/Spring com Flyway; não segue o padrão do Argos.
 
+**Relacionados**: `../painel-atena` (painel web), o app mobile (`docs/mobile.md`) e o Frota Desktop (`docs/integracao-desktop.md`).
+
 ## Itens específicos
 
 1. **Schema** mudou (entidade nova, coluna, índice, restrição)? Nova migration `V00NN__descricao.sql` em `src/main/resources/db/migration`
@@ -18,25 +20,21 @@ Itens específicos lidos pela skill global `antes-do-commit`. Java/Spring com Fl
    completo (`@Tag`, `@Operation`, `@ApiResponses`); rota pública anula a segurança com `@SecurityRequirement(name = "")` e entra em
    `SecurityConfig`. Tipo novo em `/cadastros/{tipo}` → `PREFIXOS_CADASTRO`. Exceção nova → só no `GlobalExceptionHandler`.
 4. **Contrato com clientes** mudou (request/response, status, evento de integração)? Atualizar `docs/mobile.md` (app) ou
-   `docs/integracao-desktop.md` (Frota Desktop) e **avisar no resumo final** que o painel (`../painel-atena`) e/ou o app precisam
-   acompanhar — não alterar outros repositórios por conta própria.
+   `docs/integracao-desktop.md` (Frota Desktop); o aviso aos relacionados segue a skill.
 5. **Documentação**: regra não óbvia no doc da área em `docs/` (índice no `CLAUDE.md`) ou no `AGENTS.md`. Comando, profile, variável ou
    camada nova → `CLAUDE.md`/`README.md`; variável de ambiente de produção → `docs/publicacao.md`.
-6. **Padrões** (`CLAUDE.md`): **nenhum comentário** (`//`, `/* */`, Javadoc, inclusive testes); nomes e mensagens em pt-BR; DTOs como
-   `record`, conversão manual no service (`converterParaResponse`), entity nunca exposta no controller; injeção com
-   `@RequiredArgsConstructor` + `private final`; `PasswordEncoder` injetado; sem imports não usados nem código morto. Regra nova de
-   serviço → teste JUnit + Mockito em `src/test/.../service` (sem banco).
+6. **Padrões** (`CLAUDE.md`), além das regras básicas (sem comentários inclui Javadoc): DTOs como `record`, conversão manual no
+   service (`converterParaResponse`), entity nunca exposta no controller; injeção com `@RequiredArgsConstructor` + `private final`;
+   `PasswordEncoder` injetado. Regra nova de serviço → teste JUnit + Mockito em `src/test/.../service` (sem banco).
 
 ## Finais de linha
 
-`.editorconfig` + `core.autocrlf`: no índice LF em tudo, CRLF só em `*.cmd`; UTF-8 sem BOM; newline no fim. Os legados `.editorconfig`,
-`.gitignore` e `maven-wrapper.properties` em CRLF não são tocados por conta própria.
+Exceção: os legados `.editorconfig`, `.gitignore` e `maven-wrapper.properties` em CRLF não são tocados por conta própria.
 
 ## Validação
 
 Com JDK 17 (o `java` do PATH é o 24 e quebra o Lombok): `JAVA_HOME` = a `corretto-17.*` mais nova em `~/.jdks`.
 
-- `./mvnw -q clean compile` sem erros nem warnings novos;
 - `./mvnw "-Dtest=*,!FrotaApplicationTests" test` (unitários);
 - com migration/entidade alterada, também `FrotaApplicationTests` (exige PostgreSQL; usa o banco do profile `hom`) ou a skill
   `api-teste`, que aplica as migrations numa cópia do banco. Sem PostgreSQL, dizer que essa validação ficou pendente.

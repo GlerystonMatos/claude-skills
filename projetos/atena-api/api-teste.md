@@ -6,11 +6,11 @@ Configuração lida pela skill global `api-teste`. Só API (o front é o `painel
 - **Nunca** usar o banco `atena_api_local` original, homologação nem produção.
 
 1. **JDK 17**: `JAVA_HOME` = a `corretto-17.*` mais nova em `~/.jdks` (o `java` do PATH é o 24). Ferramentas do PostgreSQL em
-   `C:\Program Files\PostgreSQL\<versão>\bin` (`psql`, `pg_dump`, `createdb`), senha do `.env` (`ATENA_HOM_DATABASE_PASSWORD`) via
+   `C:\Program Files\PostgreSQL\<versão>\bin` (`psql` para os comandos à mão), senha do `.env` (`ATENA_HOM_DATABASE_PASSWORD`) via
    `PGPASSWORD`, sem exibir o valor.
-2. **Banco**: se `atena_api_teste` ainda não existir, `createdb -U postgres atena_api_teste` e
-   `pg_dump -U postgres atena_api_local | psql -q -U postgres atena_api_teste`. Recriar (drop + cópia) só quando o usuário pedir ou
-   quando uma migration nova precisar rodar de novo do zero. Dump informado pelo usuário (ex. `../dump-atena_homologacao-*.sql`) vale
+2. **Banco**: `node <scripts-globais>/copiar-postgres.mjs --origem atena_api_local --destino atena_api_teste --usuario postgres
+   --env .env --var-senha ATENA_HOM_DATABASE_PASSWORD --temp <scratchpad>` (reaproveita a cópia; `--recriar` só quando o usuário
+   pedir ou quando uma migration nova precisar rodar de novo do zero). Dump informado pelo usuário (ex. `../dump-atena_homologacao-*.sql`) vale
    no lugar do local.
 3. **Empacotar**: encerrar só a instância de teste (processo `java` escutando na 3190 — nunca a 3000) e `./mvnw -q -DskipTests package`;
    copiar `target/frota-*.jar` (sem o `.original`) para `<scratchpad>/api/atena-api.jar`.

@@ -1,6 +1,6 @@
 ---
 name: api-teste
-description: Sobe a API (e o front, quando houver) do projeto atual em modo de teste isolado — cópia dos dados ou do banco, build no scratchpad, portas próprias, serviços externos bloqueados por proxy morto e login no navegador sem digitar nem exibir senha — seguindo a configuração do projeto guardada no repositório claude-skills (projetos/<repo>/api-teste.md e scripts). Sem configuração para o projeto, propõe criá-la. Use antes de testar endpoints, migrations ou telas de ponta a ponta, ou para conferir telas no navegador sem tocar dados reais.
+description: Sobe a API (e o front, quando houver) do projeto atual em modo de teste isolado — cópia dos dados ou do banco, build no scratchpad, portas próprias, serviços externos bloqueados por proxy morto e login no navegador sem digitar nem exibir senha — seguindo a configuração do projeto guardada no repositório claude-skills (projetos/<repo>/api-teste.md, com base comum opcional) e os scripts compartilhados (usuário de teste numa cópia JSON, cópia de banco PostgreSQL). Sem configuração para o projeto, propõe criá-la. Use antes de testar endpoints, migrations ou telas de ponta a ponta, ou para conferir telas no navegador sem tocar dados reais.
 argument-hint: "[instruções adicionais]"
 ---
 
@@ -23,8 +23,13 @@ Considere como instruções adicionais o texto que o usuário escreveu junto da 
    `claude-skills/skills/api-teste`; `..` não serve).
 2. Projeto: `REPO=$(basename -s .git "$(git remote get-url origin)")`; sem remote, o nome da pasta raiz do git.
 3. Leia `$CENTRAL/projetos/$REPO/api-teste.md`: portas (do usuário e de teste), como copiar os dados, como publicar, variáveis, health
-   check, front, login e particularidades. `<scripts>` nela = `$CENTRAL/projetos/$REPO/api-teste/scripts` (rode-os pelo caminho
-   absoluto, a partir da raiz do projeto, salvo indicação contrária).
+   check, front, login e particularidades. Se ele começar com `Base: <nome>`, leia antes `$CENTRAL/projetos/_<nome>/api-teste.md`
+   (roteiro comum, com marcadores como `<porta API>` que a configuração do projeto preenche; ela prevalece quando divergir).
+   - `<scripts-globais>` = `$CENTRAL/skills/api-teste/scripts`: `usuario-teste.mjs` (cria o usuário `teste-validacao` numa cópia
+     com `AppUsuarios.json` e grava a sessão do navegador) e `copiar-postgres.mjs` (copia um banco PostgreSQL para `<banco>_teste`;
+     recusa destino sem "teste" no nome).
+   - `<scripts>` = `$CENTRAL/projetos/$REPO/api-teste/scripts`, quando o projeto tiver scripts próprios.
+   - Rode os scripts com `node` pelo caminho absoluto, a partir da raiz do projeto, salvo indicação contrária.
 4. **Sem o arquivo**: avise e proponha criá-lo a partir do que o projeto mostra (stack, `.env.example`, `appsettings`/`application-*.
    properties`, `launchSettings.json`, Docker/compose, rota de health, fluxo de login, chave do `sessionStorage`). Mostre o rascunho e
    só crie com aprovação; ao criar, siga as regras do `claude-skills` (LF, `git pull --ff-only` antes, commit com a `texto-commit` e

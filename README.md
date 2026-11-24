@@ -28,6 +28,13 @@ projeto, em `projetos/<repo>/<skill>.md` (e scripts em `projetos/<repo>/<skill>/
 `git -C "<pasta da skill>" rev-parse --show-toplevel` (a pasta é uma junção; `..` não serve) e o projeto pelo nome do repositório em
 `git remote get-url origin` (sem remote, o nome da pasta). Sem configuração para o projeto, ela avisa e propõe criar o arquivo na hora.
 
+- **Base comum**: a configuração que começa com `Base: <nome>` herda `projetos/_<nome>/<skill>.md` e só traz o que muda. Hoje há
+  `_padrao-argos` (projetos .NET + React/MUI com armazenamento em documentos, como argos e iris).
+- **Scripts compartilhados** em `skills/<skill>/scripts/` (ex.: `api-teste/scripts/usuario-teste.mjs` e `copiar-postgres.mjs`); em
+  `projetos/<repo>/<skill>/scripts/` fica só o que é de um projeto.
+- A configuração traz só o que a skill e o `CLAUDE.md` do projeto não dizem: itens de domínio, espelho de tipos, repositórios
+  relacionados, exceções e comandos fora do comum.
+
 ## Verificar os projetos
 
 ```powershell
