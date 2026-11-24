@@ -15,12 +15,15 @@ Formato da versão: **`2.<banco>.<release>.<build>`**
 
 ## 0. Configuração do repositório
 
-1. Repositório central: `CENTRAL=$(git -C "<pasta desta skill>" rev-parse --show-toplevel)`; projeto:
-   `REPO=$(basename -s .git "$(git remote get-url origin)")`.
-2. Leia `$CENTRAL/projetos/$REPO/incrementar-versao.md`: scripts de update (onde está o `ScriptVersion`), `.ver` ativos e o que não
-   atualizar, mapa de pastas → `.ver`, módulos válidos, o que mais muda quando o banco sobe e o padrão de commit.
-3. **Sem o arquivo**: levante pelo passo 1 abaixo e proponha a configuração ao usuário; só crie com aprovação, seguindo as regras do
-   `claude-skills` (LF, `git pull --ff-only`, commit com a `texto-commit` e push).
+1. Na raiz do projeto, rode
+   `node "$(git -C "<pasta desta skill>" rev-parse --show-toplevel)/scripts/configuracao.mjs" incrementar-versao` (a pasta da skill é uma
+   junção para o `claude-skills`; `..` não serve). Ele mostra o `repositorio` (nome no `origin`), o `central` (raiz do
+   `claude-skills`), as pastas `scripts-globais` e `scripts` (do projeto), quando existem, e o conteúdo da configuração do projeto
+   — precedido da base, quando ela começa com `Base: <nome>`. A configuração do projeto prevalece sobre a base e sobre esta skill
+   quando divergirem. Ela traz os scripts de update (onde está o `ScriptVersion`), os `.ver` ativos e o que não
+   atualizar, o mapa de pastas → `.ver`, os módulos válidos, o que mais muda quando o banco sobe e o padrão de commit.
+2. **`SEM CONFIGURACAO`**: levante pelo passo 1 abaixo e proponha a configuração ao usuário; só crie com aprovação, seguindo as regras
+   do `claude-skills` (LF, `git pull --ff-only`, commit com a `texto-commit` e push).
 
 ## 1. Levantar os arquivos
 1. Raiz do repositório: `git rev-parse --show-toplevel`. Liste os `.ver` com `git ls-files "*.ver"` (inclua não versionados com

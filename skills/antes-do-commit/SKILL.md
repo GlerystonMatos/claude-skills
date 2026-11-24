@@ -12,18 +12,18 @@ da chamada.
 
 ## 0. Configuração do projeto
 
-1. Repositório central: `CENTRAL=$(git -C "<pasta desta skill>" rev-parse --show-toplevel)` (a pasta da skill é uma junção para
-   `claude-skills/skills/antes-do-commit`; `..` não serve).
-2. Projeto: `REPO=$(basename -s .git "$(git remote get-url origin)")`; sem remote, o nome da pasta raiz do git.
-3. Leia `$CENTRAL/projetos/$REPO/antes-do-commit.md`. Se ele começar com `Base: <nome>`, leia antes
-   `$CENTRAL/projetos/_<nome>/antes-do-commit.md`: a base vale para todos os projetos daquele padrão e a configuração do projeto
-   completa e, quando divergir, prevalece. Os itens das configurações valem junto com os desta skill e prevalecem sobre ela.
-4. **Sem o arquivo**: avise e proponha criá-lo a partir do que o projeto mostra (`CLAUDE.md`/`AGENTS.md`, README, stack, scripts de
-   build, pasta de docs, migrations, repositórios vizinhos). Só o que **não** está nesta skill nem no `CLAUDE.md`: itens de domínio,
-   espelho de tipos, relacionados, exceções de finais de linha e comandos fora do comum; projeto no padrão do Argos usa
-   `Base: padrao-argos`. Mostre o rascunho e só crie com aprovação; ao criar, siga as regras do `claude-skills` (LF,
-   `git pull --ff-only` antes, commit com a `texto-commit` e push). Sem aprovação, rode só os itens genéricos abaixo e diga que os
-   específicos ficaram de fora.
+1. Na raiz do projeto, rode
+   `node "$(git -C "<pasta desta skill>" rev-parse --show-toplevel)/scripts/configuracao.mjs" antes-do-commit` (a pasta da skill é uma
+   junção para o `claude-skills`; `..` não serve). Ele mostra o `repositorio` (nome no `origin`), o `central` (raiz do
+   `claude-skills`), as pastas `scripts-globais` e `scripts` (do projeto), quando existem, e o conteúdo da configuração do projeto
+   — precedido da base, quando ela começa com `Base: <nome>`. A configuração do projeto prevalece sobre a base e sobre esta skill
+   quando divergirem.
+2. **`SEM CONFIGURACAO`**: avise e proponha criar `projetos/<repositorio>/antes-do-commit.md` a partir do que o projeto mostra
+   (`CLAUDE.md`/`AGENTS.md`, README, stack, scripts de build, pasta de docs, migrations, repositórios vizinhos). Só o que **não**
+   está nesta skill nem no `CLAUDE.md`: itens de domínio, espelho de tipos, relacionados, exceções de finais de linha e comandos fora
+   do comum; projeto no padrão do Argos usa `Base: padrao-argos`. Mostre o rascunho e só crie com aprovação; ao criar, siga as regras
+   do `claude-skills` (LF, `git pull --ff-only` antes, commit com a `texto-commit` e push). Sem aprovação, rode só os itens
+   genéricos abaixo e diga que os específicos ficaram de fora.
 
 ## 1. Origem
 
@@ -65,7 +65,7 @@ existente):
 - sem imports não usados nem código morto.
 
 Projeto no padrão do Argos (`Base: padrao-argos`, ou o `CLAUDE.md` cita `argos-doc/padroes`): rode também as **buscas objetivas** da
-skill `revisar-padroes` (`$CENTRAL/skills/revisar-padroes/SKILL.md`, seção "Buscas objetivas") restritas aos arquivos alterados.
+skill `revisar-padroes` (`<central>/skills/revisar-padroes/SKILL.md`, seção "Buscas objetivas") restritas aos arquivos alterados.
 Adaptações registradas no `CLAUDE.md` do projeto valem.
 
 ## 6. Finais de linha

@@ -14,15 +14,18 @@ repositório (ações genéricas: `detectar`, `check`, `para-enviar`, `readme`, 
 
 ## 0. Configuração do projeto
 
-1. Repositório central: `CENTRAL=$(git -C "<pasta desta skill>" rev-parse --show-toplevel)`; projeto:
-   `REPO=$(basename -s .git "$(git remote get-url origin)")`.
-2. Leia `$CENTRAL/projetos/$REPO/doc-sync.md` (passos próprios do projeto, como ações extras e pares que dependem delas). O
-   `kb-tools.ps1` lê sozinho `$CENTRAL/projetos/$REPO/doc-sync/config.json`: nome do sistema, objetivo do README, padrões proibidos nos
-   públicos (`publicoProibido`), clientes que não podem aparecer (`clientesNoPublico`), URLs permitidas, exceções de par, arquivos de
-   controle extras e `acoesExtras` (ação → script em `projetos/$REPO/doc-sync/`).
-3. **Sem configuração**: o script usa padrões genéricos (sistema = nome do repositório, sem lista de clientes). Avise e proponha criar
-   os dois arquivos a partir do `docs-kb/` existente (`_mapa.md`, nomes internos e de clientes que aparecem no código), seguindo as
-   regras do `claude-skills` (LF, `git pull --ff-only`, commit com a `texto-commit` e push). Só crie com aprovação.
+1. Na raiz do projeto, rode
+   `node "$(git -C "<pasta desta skill>" rev-parse --show-toplevel)/scripts/configuracao.mjs" doc-sync` (a pasta da skill é uma
+   junção para o `claude-skills`; `..` não serve). Ele mostra o `repositorio` (nome no `origin`), o `central` (raiz do
+   `claude-skills`), as pastas `scripts-globais` e `scripts` (do projeto), quando existem, e o conteúdo da configuração do projeto
+   — precedido da base, quando ela começa com `Base: <nome>`. A configuração do projeto prevalece sobre a base e sobre esta skill
+   quando divergirem. Ela traz os passos próprios do projeto, como ações extras e os pares que dependem delas.
+2. O `kb-tools.ps1` lê sozinho `projetos/<repositorio>/doc-sync/config.json`: nome do sistema, objetivo do README, padrões proibidos
+   nos públicos (`publicoProibido`), clientes que não podem aparecer (`clientesNoPublico`), URLs permitidas, exceções de par, arquivos
+   de controle extras e `acoesExtras` (ação → script em `projetos/<repositorio>/doc-sync/`).
+3. **`SEM CONFIGURACAO`**: o script usa padrões genéricos (sistema = nome do repositório, sem lista de clientes). Avise e proponha
+   criar os dois arquivos a partir do `docs-kb/` existente (`_mapa.md`, nomes internos e de clientes que aparecem no código), seguindo
+   as regras do `claude-skills` (LF, `git pull --ff-only`, commit com a `texto-commit` e push). Só crie com aprovação.
 
 ## Passos
 

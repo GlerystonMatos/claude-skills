@@ -11,14 +11,17 @@ adicionais o texto que o usuário escreveu junto da chamada.
 
 ## 0. Configuração do projeto
 
-1. Repositório central: `CENTRAL=$(git -C "<pasta desta skill>" rev-parse --show-toplevel)`; projeto:
-   `REPO=$(basename -s .git "$(git remote get-url origin)")` (sem remote, o nome da pasta raiz do git).
-2. Leia `$CENTRAL/projetos/$REPO/medir-layout.md`: documento de padrões, exemplos de telas para `irPara`/`varrer`, avisos iniciais e
+1. Na raiz do projeto, rode
+   `node "$(git -C "<pasta desta skill>" rev-parse --show-toplevel)/scripts/configuracao.mjs" medir-layout` (a pasta da skill é uma
+   junção para o `claude-skills`; `..` não serve). Ele mostra o `repositorio` (nome no `origin`), o `central` (raiz do
+   `claude-skills`), as pastas `scripts-globais` e `scripts` (do projeto), quando existem, e o conteúdo da configuração do projeto
+   — precedido da base, quando ela começa com `Base: <nome>`. A configuração do projeto prevalece sobre a base e sobre esta skill
+   quando divergirem. Ela traz o documento de padrões, exemplos de telas para `irPara`/`varrer`, avisos iniciais e
    exceções de propósito.
-3. **Sem o arquivo**: confirme que o projeto segue o tema do Argos (`theme.ts` com `ALTURA_CONTROLE`, `CLASSE_LINHA_CONTROLES`, menu
-   lateral com `MuiListItemButton`). Se seguir, proponha a configuração (padrões, grupos e itens do menu) e só crie com aprovação,
-   seguindo as regras do `claude-skills` (LF, `git pull --ff-only`, commit com a `texto-commit` e push). Se não seguir, diga que as
-   alturas esperadas não se aplicam e meça só `transbordo()` e `abas()`.
+2. **`SEM CONFIGURACAO`**: confirme que o projeto segue o tema do Argos (`theme.ts` com `ALTURA_CONTROLE`, `CLASSE_LINHA_CONTROLES`,
+   menu lateral com `MuiListItemButton`). Se seguir, proponha a configuração (padrões, grupos e itens do menu, textos dos avisos
+   iniciais) e só crie com aprovação, seguindo as regras do `claude-skills` (LF, `git pull --ff-only`, commit com a `texto-commit`
+   e push). Se não seguir, diga que as alturas esperadas não se aplicam e meça só `transbordo()` e `abas()`.
 
 ## 1. Ambiente
 
