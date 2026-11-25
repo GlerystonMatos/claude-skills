@@ -20,3 +20,6 @@ Itens da Íris além da base. `<doc>` = `iris-doc` (índice no `AGENTS.md`), `<b
    back.
 6. **Versão**: se o usuário pediu nova versão, `version` de `iris-front/package.json` = `<Version>` de `iris-back/Directory.Build.props`
    (o teste `VersaoBackFrontTestes` garante). Não mude a versão sem pedido.
+7. **Cópia dos padrões do Argos**: compare `iris-doc/padroes/` com `<projetos>/argos/argos-doc/padroes/`
+   (`diff -rq --strip-trailing-cr`). Arquivo diferente ou faltando → copie a versão do Argos (nunca o contrário), ajuste os finais de
+   linha pelo `.gitattributes` da Íris (CRLF no `catalogo.json`) e inclua no commit. Sem o Argos na máquina, avise no relatório.
