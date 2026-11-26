@@ -170,6 +170,32 @@ teste('revisar-padroes/verificar-codigo-morto.mjs: export usado só no próprio 
     esperar(!/usada|Espelho/.test(resultado.saida), `apontou export em uso ou de tipos.ts: ${resultado.saida}`);
 });
 
+teste('revisar-padroes/verificar-botoes.mjs: botão sem ícone e IconButton sem aria-label', () => {
+    const src = join(temporaria, 'botoes', 'src');
+    mkdirSync(src, { recursive: true });
+    writeFileSync(join(src, 'Tela.tsx'), [
+        'export function Tela(): null {',
+        '    return (',
+        '        <>',
+        '            <Button onClick={() => {}}>Sem ícone</Button>',
+        '            <Button',
+        '                startIcon={<Icone />}',
+        '                onClick={() => { if (a > b) fazer(); }}>Com ícone</Button>',
+        '            <IconButton onClick={fechar}><Icone /></IconButton>',
+        '            <IconButton aria-label="fechar" onClick={fechar}><Icone /></IconButton>',
+        '            <Button {...props}>Repassado</Button>',
+        '        </>',
+        '    );',
+        '}',
+    ].join('\n'));
+    const script = join(SKILLS, 'revisar-padroes', 'scripts', 'verificar-botoes.mjs');
+    const resultado = node(script, [src]);
+    esperar(resultado.codigo === 1, 'botões fora do padrão não falharam');
+    esperar(/Tela\.tsx:4: <Button> sem ícone/.test(resultado.saida), `botão sem ícone não foi apontado: ${resultado.saida}`);
+    esperar(/Tela\.tsx:8: <IconButton> sem aria-label/.test(resultado.saida), `IconButton sem aria-label não foi apontado: ${resultado.saida}`);
+    esperar(resultado.saida.trim().split('\n').length === 2, `apontou botão correto ou repassado: ${resultado.saida}`);
+});
+
 rmSync(temporaria, { recursive: true, force: true });
 for (const r of resultados) console.log(`${r.ok ? 'ok   ' : 'FALHA'} ${r.nome}${r.ok ? '' : `\n      ${r.detalhe}`}`);
 const falhas = resultados.filter((r) => !r.ok).length;

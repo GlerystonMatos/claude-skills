@@ -46,9 +46,12 @@ Em `src/`, cada uma deve voltar vazia, salvo a exceção indicada:
 | Retorno explícito | `grep -rnE "function \w+(<[^>]*>)?\([^)]*\)\s*\{" src` |
 | Bibliotecas fora do stack | `package.json` sem roteador, estado global, cliente de consultas nem axios (ou exceção registrada) |
 | Ordem dos imports | `node "<pasta desta skill>/scripts/verificar-imports.mjs" --verificar $(find src -name "*.ts" -o -name "*.tsx")` |
+| Botão com ícone e `aria-label` | `node "<pasta desta skill>/scripts/verificar-botoes.mjs" src` → vazio, salvo exceção revisada (ex.: botão do avatar) |
 
 `scripts/verificar-imports.mjs` confere a pirâmide (imports de uma linha em ordem crescente de comprimento). Sem `--verificar` ele reordena;
 só use assim depois do aval do usuário.
+`scripts/verificar-botoes.mjs` lista `Button`/`BotaoComCarregamento` sem `startIcon`/`endIcon` e `IconButton` sem `aria-label`, lendo a tag
+inteira (atributos em várias linhas); tags com `{...props}` ficam de fora.
 
 ### Código morto
 - `node "<pasta desta skill>/scripts/verificar-codigo-morto.mjs" src` lista os `export` que nenhum outro arquivo usa (tire o `export`
