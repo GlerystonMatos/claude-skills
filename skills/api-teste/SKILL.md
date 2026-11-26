@@ -27,7 +27,8 @@ Considere como instruções adicionais o texto que o usuário escreveu junto da 
    — precedido da base, quando ela começa com `Base: <nome>`. A configuração do projeto prevalece sobre a base e sobre esta skill
    quando divergirem.
    - `<scripts-globais>`: `usuario-teste.mjs` (cria o usuário `teste-validacao` numa cópia com `AppUsuarios.json` e grava a sessão do
-     navegador) e `copiar-postgres.mjs` (copia um banco PostgreSQL para `<banco>_teste`; recusa destino sem "teste" no nome).
+     navegador; com `--perfil <id>` no `preparar` e no `sessao`, cria e usa `teste-<id>` com esse perfil, para testar permissões —
+     credencial em `<scratchpad>/usuario-teste-<id>.json`, perfil conferido no `AppPerfis.json` da cópia) e `copiar-postgres.mjs` (copia um banco PostgreSQL para `<banco>_teste`; recusa destino sem "teste" no nome).
    - `<scripts>`: scripts próprios do projeto, quando houver.
    - Rode os scripts com `node` pelo caminho absoluto, a partir da raiz do projeto, salvo indicação contrária.
 2. **`SEM CONFIGURACAO`**: avise e proponha criá-la a partir do que o projeto mostra (stack, `.env.example`, `appsettings`/

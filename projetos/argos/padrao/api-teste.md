@@ -8,7 +8,8 @@ teste (`argos` ou `iris`), `<chave sessão>` do `sessionStorage` e as variáveis
 1. **Dados**: copie as pastas de dados da raiz do repositório (ou as informadas pelo usuário) para o `<scratchpad>` só se a cópia ainda
    não existir. Em seguida `node <scripts-globais>/usuario-teste.mjs preparar <scratchpad> --dados <dados> --modelo <modelo>`: cria na
    **cópia** o usuário `teste-validacao` (perfil Administrador) com senha aleatória em `<scratchpad>/usuario-teste.json` (nunca
-   exibir). Sem `AppUsuarios.json` na cópia, a API entra no acesso inicial (bootstrap), que não carrega todas as telas.
+   exibir). Para testar permissões, acrescente `--perfil <id do perfil>` (ex.: `suporte`): cria também `teste-<id>` com esse perfil e
+   credencial em `<scratchpad>/usuario-teste-<id>.json`; perfil inexistente na cópia é recusado com a lista dos perfis. Sem `AppUsuarios.json` na cópia, a API entra no acesso inicial (bootstrap), que não carrega todas as telas.
 2. **Publicar**: encerre só a API de teste (processo escutando na `<porta API>`, confirme pela porta) e
    `cd <back> && dotnet publish <projeto Api> -c Release -o <scratchpad>/api`.
 3. **Variáveis**:
@@ -24,7 +25,7 @@ teste (`argos` ou `iris`), `<chave sessão>` do `sessionStorage` e as variáveis
    `http://localhost:<porta API>/swagger`.
 7. **Login no navegador**:
    1. `node <scripts-globais>/usuario-teste.mjs sessao <scratchpad> <front>/public/sessao-teste.txt --url http://localhost:<porta API>`
-      (grava a sessão no formato do `sessionStorage`, sem imprimir o token).
+      (grava a sessão no formato do `sessionStorage`, sem imprimir o token; `--perfil <id>` entra com o usuário daquele perfil).
    2. Em `http://localhost:<porta front>/`:
       `sessionStorage.setItem('<chave sessão>', JSON.parse(await (await fetch('/sessao-teste.txt')).text()))` e `location.reload()`.
    3. Apague `<front>/public/sessao-teste.txt` na hora. O token vale até a API reiniciar.

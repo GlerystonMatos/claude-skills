@@ -3,6 +3,14 @@ import { pbkdf2Sync, randomBytes, randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 
 const LOGIN = 'teste-validacao';
+
+function loginDoPerfil(perfil) {
+    return perfil === undefined ? LOGIN : `teste-${perfil.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+}
+
+function arquivoCredencial(scratch, perfil) {
+    return join(scratch, perfil === undefined ? 'usuario-teste.json' : `usuario-${loginDoPerfil(perfil)}.json`);
+}
 const ITERACOES = 600_000;
 
 function sair(mensagem) {
@@ -16,10 +24,12 @@ function gerarHash(senha) {
     return `pbkdf2-sha256$${ITERACOES}$${salt.toString('base64')}$${derivado.toString('base64')}`;
 }
 
-function usuarioDoModelo(modelo, hash) {
-    const base = { login: LOGIN, nome: 'Teste de validação', hashSenha: hash, perfilId: 'administrador', versaoSeguranca: 1 };
+function usuarioDoModelo(modelo, hash, perfil) {
+    const login = loginDoPerfil(perfil);
+    const nome = perfil === undefined ? 'Teste de validação' : `Teste de validação (${perfil})`;
+    const base = { login, nome, hashSenha: hash, perfilId: perfil ?? 'administrador', versaoSeguranca: 1 };
     if (modelo === 'argos') {
-        return { ...base, temImagem: false, colaborador: { chave: LOGIN, sigla: 'TST', cor: '#9e9e9e' } };
+        return { ...base, temImagem: false, colaborador: { chave: login, sigla: perfil === undefined ? 'TST' : 'TSP', cor: '#9e9e9e' } };
     }
     if (modelo === 'iris') {
         return {
@@ -34,25 +44,40 @@ function usuarioDoModelo(modelo, hash) {
     return sair(`Modelo desconhecido: ${modelo} (use argos ou iris).`);
 }
 
-function preparar(scratch, pastaDados, modelo) {
+function validarPerfil(pastaDados, perfil) {
+    if (perfil === undefined) return;
+    const arquivoPerfis = join(pastaDados, 'AppPerfis.json');
+    if (!existsSync(arquivoPerfis)) return;
+    const dados = JSON.parse(readFileSync(arquivoPerfis, 'utf8').replace(/^\uFEFF/, ''));
+    const perfis = Array.isArray(dados) ? dados : dados.perfis ?? [];
+    if (!perfis.some((item) => item.id === perfil)) {
+        sair(`Perfil ${perfil} não existe na cópia. Perfis: ${perfis.map((item) => `${item.id} (${item.nome})`).join(', ')}`);
+    }
+}
+
+function preparar(scratch, pastaDados, modelo, perfil) {
     const arquivoUsuarios = join(pastaDados, 'AppUsuarios.json');
-    const credencial = join(scratch, 'usuario-teste.json');
+    const credencial = arquivoCredencial(scratch, perfil);
+    const login = loginDoPerfil(perfil);
     if (!existsSync(arquivoUsuarios)) sair(`${arquivoUsuarios} não existe na cópia; use o acesso inicial (bootstrap).`);
-    const dados = JSON.parse(readFileSync(arquivoUsuarios, 'utf8').replace(/^﻿/, ''));
-    if (dados.usuarios.some((usuario) => usuario.login === LOGIN) && existsSync(credencial)) {
-        console.log(`${LOGIN} já existe na cópia`);
+    validarPerfil(pastaDados, perfil);
+    const dados = JSON.parse(readFileSync(arquivoUsuarios, 'utf8').replace(/^\uFEFF/, ''));
+    if (dados.usuarios.some((usuario) => usuario.login === login) && existsSync(credencial)) {
+        console.log(`${login} já existe na cópia`);
         return;
     }
     const senha = randomBytes(18).toString('base64url');
-    dados.usuarios = dados.usuarios.filter((usuario) => usuario.login !== LOGIN);
-    dados.usuarios.push(usuarioDoModelo(modelo, gerarHash(senha)));
+    dados.usuarios = dados.usuarios.filter((usuario) => usuario.login !== login);
+    dados.usuarios.push(usuarioDoModelo(modelo, gerarHash(senha), perfil));
     writeFileSync(arquivoUsuarios, JSON.stringify(dados));
-    writeFileSync(credencial, JSON.stringify({ login: LOGIN, senha }));
-    console.log(`${LOGIN} criado na cópia; credencial em ${credencial} (não exibir)`);
+    writeFileSync(credencial, JSON.stringify({ login, senha }));
+    console.log(`${login} criado na cópia${perfil === undefined ? '' : ` com o perfil ${perfil}`}; credencial em ${credencial} (não exibir)`);
 }
 
-async function sessao(scratch, saida, url) {
-    const credencial = JSON.parse(readFileSync(join(scratch, 'usuario-teste.json'), 'utf8'));
+async function sessao(scratch, saida, url, perfil) {
+    const arquivo = arquivoCredencial(scratch, perfil);
+    if (!existsSync(arquivo)) sair(`${arquivo} não existe: rode antes o preparar${perfil === undefined ? '' : ` com --perfil ${perfil}`}.`);
+    const credencial = JSON.parse(readFileSync(arquivo, 'utf8'));
     const resposta = await fetch(`${url}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,10 +97,10 @@ function opcao(lista, nome) {
 
 const [comando, scratch, ...resto] = process.argv.slice(2);
 if (comando === 'preparar' && scratch && opcao(resto, 'dados') && opcao(resto, 'modelo')) {
-    preparar(scratch, opcao(resto, 'dados'), opcao(resto, 'modelo'));
+    preparar(scratch, opcao(resto, 'dados'), opcao(resto, 'modelo'), opcao(resto, 'perfil'));
 } else if (comando === 'sessao' && scratch && resto[0] && opcao(resto, 'url')) {
-    await sessao(scratch, resto[0], opcao(resto, 'url'));
+    await sessao(scratch, resto[0], opcao(resto, 'url'), opcao(resto, 'perfil'));
 } else {
-    sair('Uso: node usuario-teste.mjs preparar <scratchpad> --dados <pasta com AppUsuarios.json> --modelo argos|iris\n'
-        + '     node usuario-teste.mjs sessao <scratchpad> <arquivo-saida> --url <url da API>');
+    sair('Uso: node usuario-teste.mjs preparar <scratchpad> --dados <pasta com AppUsuarios.json> --modelo argos|iris [--perfil <id do perfil>]\n'
+        + '     node usuario-teste.mjs sessao <scratchpad> <arquivo-saida> --url <url da API> [--perfil <id do perfil>]');
 }
