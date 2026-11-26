@@ -155,6 +155,21 @@ teste('revisar-padroes/verificar-imports.mjs: aponta pirâmide fora de ordem', (
     esperar(node(script, ['--verificar', errado]).codigo === 1, 'arquivo errado não foi apontado');
 });
 
+teste('revisar-padroes/verificar-codigo-morto.mjs: export usado só no próprio arquivo ou só em teste', () => {
+    const src = join(temporaria, 'codigo-morto', 'src');
+    mkdirSync(src, { recursive: true });
+    writeFileSync(join(src, 'util.ts'), 'export function usada(): number { return 1; }\nexport function soTeste(): number { return 2; }\n');
+    writeFileSync(join(src, 'tela.ts'), "import { usada } from './util';\nexport const valor = usada();\nconsole.log(valor);\n");
+    writeFileSync(join(src, 'util.test.ts'), "import { soTeste } from './util';\nsoTeste();\n");
+    writeFileSync(join(src, 'tipos.ts'), 'export interface Espelho { chave: number }\n');
+    const script = join(SKILLS, 'revisar-padroes', 'scripts', 'verificar-codigo-morto.mjs');
+    const resultado = node(script, [src]);
+    esperar(resultado.codigo === 1, 'export morto não falhou');
+    esperar(/tela\.ts: valor \(exportado e usado só no próprio arquivo\)/.test(resultado.saida), `valor não foi apontado: ${resultado.saida}`);
+    esperar(/aviso: .*soTeste/.test(resultado.saida), 'export usado só no teste não virou aviso');
+    esperar(!/usada|Espelho/.test(resultado.saida), `apontou export em uso ou de tipos.ts: ${resultado.saida}`);
+});
+
 rmSync(temporaria, { recursive: true, force: true });
 for (const r of resultados) console.log(`${r.ok ? 'ok   ' : 'FALHA'} ${r.nome}${r.ok ? '' : `\n      ${r.detalhe}`}`);
 const falhas = resultados.filter((r) => !r.ok).length;

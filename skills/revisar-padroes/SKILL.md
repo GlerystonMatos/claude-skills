@@ -1,6 +1,6 @@
 ---
 name: revisar-padroes
-description: Roda a validação completa de um projeto (build, lint, testes) e o revisa contra o pacote de padrões do Argos (argos-doc/padroes, no repositório argos) — buscas objetivas do checklist 09b (fetch solto, any/enum, export default, hex, localStorage, comentários, ordem dos imports), Docker/nginx/CI conforme 07a/07b e regras de UI de 04a/04b — e entrega um relatório com o que está no padrão, o que está fora (arquivo:linha) e o que depende de decisão. Use quando o usuário pedir "validação completa", "verificar os padrões do Argos", "o que está fora do padrão" ou "revise de novo se ficou algo pendente" num projeto que segue o Argos.
+description: Roda a validação completa de um projeto (build, lint, testes) e o revisa contra o pacote de padrões do Argos (argos-doc/padroes, no repositório argos) — buscas objetivas do checklist 09b (fetch solto, any/enum, export default, hex, localStorage, comentários, ordem dos imports, código morto), Docker/nginx/CI conforme 07a/07b e regras de UI de 04a/04b — e entrega um relatório com o que está no padrão, o que está fora (arquivo:linha) e o que depende de decisão. Use quando o usuário pedir "validação completa", "verificar os padrões do Argos", "o que está fora do padrão" ou "revise de novo se ficou algo pendente" num projeto que segue o Argos.
 argument-hint: [pasta do projeto]
 ---
 
@@ -49,6 +49,14 @@ Em `src/`, cada uma deve voltar vazia, salvo a exceção indicada:
 
 `scripts/verificar-imports.mjs` confere a pirâmide (imports de uma linha em ordem crescente de comprimento). Sem `--verificar` ele reordena;
 só use assim depois do aval do usuário.
+
+### Código morto
+- `node "<pasta desta skill>/scripts/verificar-codigo-morto.mjs" src` lista os `export` que nenhum outro arquivo usa (tire o `export`
+  ou apague) e, como aviso, os usados fora só pelos testes (aceitável quando é a função testada). Os `tipos.ts` ficam de fora, porque
+  espelham os DTOs da API.
+- À mão, procure campos de estado ou de tipo só gravados e nunca lidos (busque cada campo fora das atribuições do redutor e do estado
+  inicial), linhas que não mudam nada (`x === null ? null : x`), `async` sem `await` e logs de depuração (`console.`), salvo o
+  `LimiteErroApp`.
 
 Também confira o `tsconfig` (`strict`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`,
 `verbatimModuleSyntax`, `erasableSyntaxOnly`) e se toda lógica pura em `.ts` tem `*.test.ts` ao lado (hooks com cálculo dentro
