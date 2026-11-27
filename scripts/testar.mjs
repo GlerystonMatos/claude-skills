@@ -196,6 +196,26 @@ teste('revisar-padroes/verificar-botoes.mjs: botão sem ícone e IconButton sem 
     esperar(resultado.saida.trim().split('\n').length === 2, `apontou botão correto ou repassado: ${resultado.saida}`);
 });
 
+teste('revisar-padroes/substituir.mjs: mantém CRLF e BOM e não altera nada se um trecho falhar', () => {
+    const pasta = join(temporaria, 'substituir');
+    mkdirSync(pasta, { recursive: true });
+    const arquivo = join(pasta, 'Tela.tsx');
+    const original = '﻿import a from \'a\';\r\nconst x = 1;\r\nconst y = 2;\r\n';
+    writeFileSync(arquivo, original);
+    const script = join(SKILLS, 'revisar-padroes', 'scripts', 'substituir.mjs');
+    const pares = join(pasta, 'pares.json');
+    writeFileSync(pares, JSON.stringify([['const x = 1;\nconst y = 2;', 'const x = 10;\nconst y = 20;\nconst z = 30;'], { antigo: 'import a', novo: 'import b' }]));
+    const ok = node(script, [arquivo, pares]);
+    esperar(ok.codigo === 0, `falhou: ${ok.saida}`);
+    const esperado = '﻿import b from \'a\';\r\nconst x = 10;\r\nconst y = 20;\r\nconst z = 30;\r\n';
+    esperar(readFileSync(arquivo, 'utf8') === esperado, `conteúdo errado: ${JSON.stringify(readFileSync(arquivo, 'utf8'))}`);
+    writeFileSync(pares, JSON.stringify([['const x = 10;', 'const x = 100;'], ['const', 'let']]));
+    const falha = node(script, [arquivo, pares]);
+    esperar(falha.codigo === 1, 'trecho repetido não falhou');
+    esperar(/par 2: trecho aparece 3 vez/.test(falha.saida), `erro não explicado: ${falha.saida}`);
+    esperar(readFileSync(arquivo, 'utf8') === esperado, 'alterou o arquivo apesar da falha');
+});
+
 rmSync(temporaria, { recursive: true, force: true });
 for (const r of resultados) console.log(`${r.ok ? 'ok   ' : 'FALHA'} ${r.nome}${r.ok ? '' : `\n      ${r.detalhe}`}`);
 const falhas = resultados.filter((r) => !r.ok).length;

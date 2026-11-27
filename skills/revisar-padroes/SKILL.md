@@ -85,5 +85,8 @@ rolagem horizontal em 360 px.
 3. O que está fora, numerado e agrupado (infra e CI, interface, código), cada item com `arquivo:linha` e a regra do Argos que ele fere.
 4. Separe o que é correção direta do que depende de decisão (trocar biblioteca, abrir exceção). Com várias decisões, pergunte uma por vez.
 
-Ao corrigir com aval: rode de novo build, lint, testes e as buscas, registre no `CLAUDE.md` do projeto as exceções aceitas e as
+Ao corrigir com aval, para trocas exatas de texto use `node "<pasta desta skill>/scripts/substituir.mjs" <arquivo> <pares.json>`
+(`pares.json` = `[["trecho antigo", "trecho novo"], ...]`, escrito no scratchpad), e não `sed -i`, que troca CRLF por LF no Git Bash. O
+script mantém o final de linha e o BOM do arquivo, exige que cada trecho apareça exatamente uma vez e, se algum falhar, não altera nada.
+Depois rode de novo build, lint, testes e as buscas, registre no `CLAUDE.md` do projeto as exceções aceitas e as
 novas regras, e termine com uma segunda revisão curta dizendo o que ainda ficou pendente.
