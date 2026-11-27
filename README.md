@@ -6,7 +6,7 @@ Skills do Claude Code e do Codex, versionadas num só lugar.
 
 | Pasta | Conteúdo | Instalação |
 |---|---|---|
-| `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao`, `revisar-padroes`, `infra-gcp-padrao`, `antes-do-commit`, `api-teste`, `medir-layout`, `iniciar-dashboard-frt`, `sincronizar-gitconfig`, `apagar-branch`) | Globais: `~/.claude/skills/<skill>` (Claude Code) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
+| `skills/` | Skills genéricas, usadas em qualquer projeto (`texto-commit`, `incrementar-versao`, `doc-sync`, `iniciar-ambiente-docker`, `checklist-prompt`, `validar-rebase`, `compose-padrao`, `revisar-padroes`, `infra-gcp-padrao`, `antes-do-commit`, `api-teste`, `medir-layout`, `iniciar-dashboard-frt`, `sincronizar-gitconfig`, `apagar-branch`, `igualar-ao-argos`) | Globais: `~/.claude/skills/<skill>` (Claude Code) e `~/.codex/skills/<skill>` (Codex) são junções para `skills/<skill>` |
 | `scripts/` | Ferramentas do repositório: `configuracao.mjs` (lê a configuração de um projeto), `verificar-repositorio.mjs` e `testar.mjs` | Não são skills; ficam fora de `skills/` |
 | `projetos/<repo>/` | Configuração de cada projeto para as skills globais: `<skill>.md` (itens, portas, comandos, variáveis) e `<skill>/scripts/` | Só aqui; os projetos não guardam skills. `<repo>` = nome do repositório no `origin` |
 
